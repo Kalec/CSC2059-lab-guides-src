@@ -39,7 +39,7 @@ LATEX_FLAGS := \
 	-halt-on-error \
 	-file-line-error
 
-.PHONY: all one list clean distclean help
+.PHONY: all one file list clean distclean help
 
 
 # ------------------------------------------------------------
@@ -283,3 +283,22 @@ help:
 	@printf "      Remove temporary build files and generated PDFs.\n\n"
 	@printf "  NO_COLOR=1 make\n"
 	@printf "      Disable coloured terminal output.\n\n"
+
+# Build the practical containing a specific source file.
+#
+# Used primarily by VS Code:
+#
+#   make file TEX=/absolute/path/to/practical03.tex
+
+file:
+	@if [ -z "$(TEX)" ]; then \
+		echo "Usage: make file TEX=/path/to/document.tex"; \
+		exit 1; \
+	fi
+	@if [ ! -f "$(TEX)" ]; then \
+		echo "Source file does not exist:"; \
+		echo "  $(TEX)"; \
+		exit 1; \
+	fi
+	@lab="$$(basename "$$(dirname "$(TEX)")")"; \
+	$(MAKE) --no-print-directory one LAB="$$lab" VERBOSE="$(VERBOSE)"
