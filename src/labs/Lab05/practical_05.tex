@@ -1,0 +1,1567 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% CSC2059 Practical 5
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass{csc2059practical}
+
+% Additional packages used by this practical.
+% TikZ is used for the CSC2059 Engineering Workflow diagram.
+% FontAwesome is used for the engineering question icon.
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning, fit, backgrounds}
+\usepackage{fontawesome5}
+
+\setpracticalnumber{5}
+
+\setpracticaltitle{Generic Data Structures with Templates}
+
+\setpracticalsubtitle{From Repeated Code to Reusable Abstractions}
+
+\setpracticalauthor{
+Dr Giuseppe Trombino\\
+School of Electronics, Electrical Engineering and Computer Science\\
+Queen's University Belfast
+}
+\setpracticaldate{}
+
+\definecolor{workflowLearn}{HTML}{EAF4EA}
+\definecolor{workflowBuild}{HTML}{FFF3D6}
+\definecolor{workflowImprove}{HTML}{F3EAF7}
+
+\definecolor{workflowLearnFrame}{HTML}{4F8A5B}
+\definecolor{workflowBuildFrame}{HTML}{B88300}
+\definecolor{workflowImproveFrame}{HTML}{7A4E9D}
+
+
+
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+\clearpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Introduction
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\frontsection{Introduction}
+
+Throughout this module, you have implemented increasingly sophisticated data
+structures using C++. Along the way, you may have noticed that many algorithms
+look remarkably similar, differing only in the type of data they manipulate.
+
+Imagine implementing a stack for integers, then repeating almost the same
+implementation for floating-point numbers, strings, and custom classes. Although
+each version performs the same operations, maintaining multiple copies of the
+same algorithm quickly becomes inefficient, error-prone and difficult to extend.
+
+Professional software engineers address this problem by identifying duplicated
+code and replacing it with carefully designed abstractions. In C++, one of the
+most useful mechanisms for achieving this is the \textbf{template}.
+
+In this practical, you will progressively transform type-specific
+implementations into reusable generic algorithms, generic containers and,
+finally, generic abstract data types. Rather than treating templates as an
+isolated language feature, you will explore how they emerge naturally as a
+solution to a genuine engineering problem.
+
+By the end of this practical, you will have taken another step towards thinking
+like a software engineer: recognising repeated patterns, refactoring duplicated
+code, and building software that is both reusable and easier to maintain.
+
+\begin{engineeringquestion}
+
+How can we design software that works with many different data types without
+repeatedly implementing the same algorithms and data structures?
+
+\end{engineeringquestion}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Learning Outcomes
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{learningoutcomes}
+
+By the end of this practical, you should be able to:
+
+\begin{itemize}
+
+\item Explain why code duplication is undesirable in software development.
+
+\item Implement simple function templates to create reusable algorithms.
+
+\item Develop generic class templates that work with multiple data types.
+
+\item Extend a generic abstract data type while preserving its existing
+behaviour.
+
+\item Apply Test-Driven Development (TDD) techniques to incrementally develop
+and verify generic code.
+
+\item Recognise opportunities to refactor duplicated code into reusable
+abstractions.
+
+\end{itemize}
+
+\end{learningoutcomes}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Time estimation
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{infobox}[Estimated Effort]
+
+This practical has been designed for a two-hour session.
+
+\begin{center}
+\begin{tabular}{lr}
+\textbf{Section} & \textbf{Estimated Time}\\
+\hline
+Before You Begin & 5 minutes\\
+Repository Tour & 5 minutes\\
+Part A --- The Cost of Copy-and-Paste & 25 minutes\\
+Part B --- One Algorithm, Many Types & 25 minutes\\
+Part C --- One Container, Many Types & 25 minutes\\
+Part D --- One ADT, Many Types & 25 minutes\\
+Reflection and Wrap-up & 10 minutes\\
+\hline
+\textbf{Total} & \textbf{2 hours}\\
+\end{tabular}
+\end{center}
+
+The timings are intended as a guide. If you complete the core activities early,
+use the remaining time to attempt the optional challenge activities, revisit the
+public tests, or experiment with the code further.
+
+\end{infobox}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Before You Begin
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\frontsection{Before You Begin}
+
+Before starting this practical, take a moment to check your understanding of the
+following topics.
+
+You do not need to be an expert in every area, but you should recognise most of
+these concepts and know where you have encountered them previously.
+
+\begin{itemize}
+
+\item I can compile and run C++ programs using Visual Studio Code and a
+Makefile.
+
+\item I know how to execute demonstrations and tests contained within a
+repository.
+
+\item I can separate declarations (\texttt{.h}) from implementations
+(\texttt{.cpp}).
+
+\item I can use dynamically allocated arrays and release memory using
+\texttt{delete[]}.
+
+\item I understand why pointer parameters may need to be passed by reference
+when a function changes what they point to.
+
+\item I can read and use simple C++ classes.
+
+\item I can recognise the behaviour of a stack data structure.
+
+\item I can use public tests to guide my implementation decisions.
+
+\end{itemize}
+
+If several items feel unfamiliar, consider revisiting:
+
+\begin{itemize}
+
+\item Practical 3 --- Pointers and Manual Memory Management
+
+\item Practical 4 --- Classes, Resource Management and Stacks
+
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Repository Access
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\frontsection{Repository Access}
+
+Access the Practical 5 repository from Canvas and clone it to your local
+machine.
+
+Before beginning the exercises:
+
+\begin{itemize}
+
+\item ensure the repository compiles successfully;
+
+\item explore the available demonstrations;
+
+\item execute the provided tests;
+
+\item familiarise yourself with the repository structure.
+
+\end{itemize}
+
+Throughout this practical, demonstrations help you observe how the existing code
+behaves, while the public tests guide your implementation and provide immediate
+feedback on your progress. Together they support an iterative workflow of
+observation, testing, implementation and refinement.
+
+Remember to commit your work regularly using meaningful commit messages as you
+complete each section.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Repository Tour
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\frontsection{Repository Tour}
+
+This practical is organised around four connected activities. Each part focuses
+on a different stage in the movement from duplicated code to reusable software.
+
+\begin{center}
+\begin{tabular}{lll}
+\textbf{Part} & \textbf{Engineering Question} & \textbf{Main Files}\\
+\hline
+Part A & Why is duplicated code a problem? & \texttt{insert.*}\\
+Part B & Can one algorithm work for many types? & \texttt{generic\_insert.h}\\
+Part C & Can containers also be generic? & \texttt{SafeArray.h}\\
+Part D & Can an entire abstract data type be generic? & \texttt{Stack.h}, \texttt{StackNode.h}\\
+\end{tabular}
+\end{center}
+
+The repository itself follows the same structure used throughout the module.
+
+\begin{center}
+\begin{tabular}{ll}
+\textbf{Folder} & \textbf{Purpose}\\
+\hline
+\texttt{examples/} & Demonstration programs that introduce each new concept.\\
+\texttt{tests/} & Public Catch2 tests that guide and verify your implementation.\\
+\texttt{include/} & Header files and template implementations you will complete or extend.\\
+\texttt{src/} & Source files containing non-template implementations.\\
+\texttt{external/} & Third-party libraries supplied with the repository, including Catch2.\\
+\texttt{Makefile} & Builds demonstrations and tests. You will also extend it in this practical.\\
+\end{tabular}
+\end{center}
+
+By the end of this practical, you will have progressed from recognising the
+cost of duplicated code, to refactoring repeated implementations into reusable
+algorithms, containers and abstract data types.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Suggested Workflow
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\frontsection{A Suggested Workflow}
+
+Throughout this module, you have been encouraged to approach programming as an
+iterative engineering process rather than attempting to solve an entire problem
+at once.
+
+For each activity in this practical, begin by observing the supplied
+demonstration, make a prediction about the expected behaviour, study the public
+tests, and then implement one small improvement at a time. As your solutions
+evolve, look for opportunities to identify duplicated code, refactor it into
+reusable abstractions, and reuse those abstractions throughout your program.
+
+This workflow mirrors the way many professional software engineers develop
+software: by understanding the problem first, developing a working solution, and
+then improving the design through careful refactoring.
+
+\begin{figure}[H]
+\centering
+
+\definecolor{WorkflowProblem}{HTML}{EAF4EA}
+\definecolor{WorkflowProblemFrame}{HTML}{4F8A5B}
+\definecolor{WorkflowSolution}{HTML}{FFF3D6}
+\definecolor{WorkflowSolutionFrame}{HTML}{B88300}
+\definecolor{WorkflowDesign}{HTML}{F3EAF7}
+\definecolor{WorkflowDesignFrame}{HTML}{7A4E9D}
+
+\begin{tikzpicture}[
+    node distance=6mm,
+    workflowstep/.style={
+        rounded corners=2mm,
+        draw=black!35,
+        fill=white,
+        minimum width=3cm,
+        minimum height=7mm,
+        align=center,
+        font=\small\sffamily
+    },
+    workflowarrow/.style={
+        -{Latex[length=2mm]},
+        thick,
+        draw=black!55
+    },
+    phaselabel/.style={
+        font=\bfseries\sffamily,
+        align=center
+    }
+]
+
+% Phase 1 nodes
+\node[phaselabel, text=WorkflowProblemFrame] (p1title) {Understand the Problem};
+\node[workflowstep, below=of p1title] (predict) {Predict};
+\node[workflowstep, below=of predict] (observe) {Observe};
+\node[workflowstep, below=of observe] (understand) {Understand};
+
+% Phase 2 nodes
+\node[phaselabel, text=WorkflowSolutionFrame, right=18mm of p1title] (p2title) {Develop the Solution};
+\node[workflowstep, below=of p2title] (test) {Test};
+\node[workflowstep, below=of test] (implement) {Implement};
+\node[workflowstep, below=of implement] (refine) {Refine};
+
+% Phase 3 nodes
+\node[phaselabel, text=WorkflowDesignFrame, right=18mm of p2title] (p3title) {Improve the Design};
+\node[workflowstep, below=of p3title] (smell) {Detect Code Smell};
+\node[workflowstep, below=of smell] (refactor) {Refactor};
+\node[workflowstep, below=of refactor] (reuse) {Reuse};
+
+% Phase background boxes
+% \node[
+%     draw=WorkflowProblemFrame,
+%     fill=WorkflowProblem,
+%     rounded corners=3mm,
+%     thick,
+%     fit=(p1title)(predict)(observe)(understand),
+%     inner sep=4mm
+% ] (phase1box) {};
+
+% \node[
+%     draw=WorkflowSolutionFrame,
+%     fill=WorkflowSolution,
+%     rounded corners=3mm,
+%     thick,
+%     fit=(p2title)(test)(implement)(refine),
+%     inner sep=4mm
+% ] (phase2box) {};
+
+% \node[
+%     draw=WorkflowDesignFrame,
+%     fill=WorkflowDesign,
+%     rounded corners=3mm,
+%     thick,
+%     fit=(p3title)(smell)(refactor)(reuse),
+%     inner sep=4mm
+% ] (phase3box) {};
+
+% Keep background boxes behind content
+\begin{scope}[on background layer]
+    \node[
+        draw=WorkflowProblemFrame,
+        fill=WorkflowProblem,
+        rounded corners=3mm,
+        thick,
+        fit=(p1title)(predict)(observe)(understand),
+        inner sep=4mm
+    ] {};
+    \node[
+        draw=WorkflowSolutionFrame,
+        fill=WorkflowSolution,
+        rounded corners=3mm,
+        thick,
+        fit=(p2title)(test)(implement)(refine),
+        inner sep=4mm
+    ] {};
+    \node[
+        draw=WorkflowDesignFrame,
+        fill=WorkflowDesign,
+        rounded corners=3mm,
+        thick,
+        fit=(p3title)(smell)(refactor)(reuse),
+        inner sep=4mm
+    ] {};
+\end{scope}
+
+% Internal arrows
+\draw[workflowarrow] (predict) -- (observe);
+\draw[workflowarrow] (observe) -- (understand);
+
+\draw[workflowarrow] (test) -- (implement);
+\draw[workflowarrow] (implement) -- (refine);
+
+\draw[workflowarrow] (smell) -- (refactor);
+\draw[workflowarrow] (refactor) -- (reuse);
+
+% Phase-to-phase arrows
+\draw[workflowarrow] (understand.east) -- ++(7mm,0) |- (test.west);
+\draw[workflowarrow] (refine.east) -- ++(7mm,0) |- (smell.west);
+
+\end{tikzpicture}
+
+\caption{The CSC2059 engineering workflow used throughout this practical.}
+\label{fig:csc2059-engineering-workflow}
+\end{figure}
+
+Keep this workflow in mind as you progress through the practical. Although the
+programming tasks become increasingly sophisticated, the development process
+remains the same: observe, experiment, test, improve, and gradually build more
+reusable software.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Part A starts here
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Part A -- The Cost of Copy-and-Paste}
+
+\begin{learningoutcomes}
+By the end of this section, you should be able to:
+\begin{itemize}
+    \item explain why duplicated code becomes difficult to maintain;
+    \item identify which parts of an algorithm depend on the data type being used;
+    \item use public tests to guide the implementation of a type-specific insertion function;
+    \item recognise code duplication as a design problem rather than merely an inconvenience.
+\end{itemize}
+\end{learningoutcomes}
+
+\begin{infobox}[Estimated Effort]
+Estimated time: \textbf{25 minutes}
+\end{infobox}
+
+In this first part, you will begin with an insertion function that already works for integer arrays. You will then adapt the same algorithm so that it works with other data types.
+
+At first, this may seem like a reasonable approach. However, as you repeat the same implementation for several different types, you should begin to notice an important software engineering problem.
+
+\subsection{A.1 Run the demonstration}
+
+Run the demonstration using:
+
+\begin{terminal}
+make demo01
+\end{terminal}
+
+This demonstration uses the function \texttt{insertInt()} to insert a value into a dynamically allocated integer array.
+
+Now open the file: 
+
+\begin{terminal}
+    examples/demo01_insert.cpp
+\end{terminal}
+
+and examine the current use of the \texttt{insertInt()} function.
+
+You should see that inserting an integer value into the array works correctly.
+
+\begin{reflectionbox}
+    Before looking at the implementation, make a quick prediction.
+    
+    \begin{itemize}
+        \item What do you think \texttt{insertInt()} needs to do internally?
+        \item Which parts of the algorithm are about array manipulation?
+        \item Which parts of the algorithm are specifically about the type \texttt{int}?
+    \end{itemize}
+\end{reflectionbox}
+
+\subsection{A.2 Inspect the existing implementation}
+
+Now open:
+
+\begin{terminal}
+include/insert.h
+src/insert.cpp
+\end{terminal}
+
+Find the implementation of:
+
+\begin{cppcode}
+bool insertInt(int*& values, int& size, int position, int value)
+\end{cppcode}
+
+Read through the function carefully. Notice that it:
+
+\begin{itemize}
+    \item checks whether the requested position is valid;
+    \item creates a new array that is one element larger;
+    \item copies the values before the insertion point;
+    \item places the new value into the requested position;
+    \item copies the remaining values after the insertion point;
+    \item deletes the old array;
+    \item updates the pointer and size.
+\end{itemize}
+
+This is the core insertion algorithm.
+
+\subsection{A.3 Implement \texttt{insertDouble()}}
+
+The file \texttt{insert.cpp} also contains a placeholder for:
+
+\begin{cppcode}
+bool insertDouble(double*& values, int& size, int position, double value)
+\end{cppcode}
+
+Your task is to implement this function.
+
+Use \texttt{insertInt()} as a guide. The algorithm should be the same, but the array stores \texttt{double} values instead of \texttt{int} values.
+
+When you think your implementation is ready, run:
+
+\begin{terminal}
+make test-insert
+\end{terminal}
+
+Use the test output to guide your next change. Do not try to fix everything at once. Make one small change, run the tests again, and repeat until the relevant tests pass.
+
+\begin{commonerror}
+Common mistakes in this task include:
+
+\begin{itemize}
+    \item forgetting to update the array size after insertion;
+    \item copying from the wrong index after the insertion point;
+    \item using \texttt{int*} instead of \texttt{double*};
+    \item returning \texttt{true} even when the position is invalid;
+    \item forgetting to delete the old array before updating the pointer.
+\end{itemize}
+\end{commonerror}
+
+\subsection{A.4 Optional extension: implement \texttt{insertPerson()}}
+
+Once \texttt{insertDouble()} works, you may try extending the same idea to a user-defined type.
+
+The repository contains a \texttt{Person} class that can be used to create objects representing people. Your task is to add a new insertion function for arrays of \texttt{Person} objects.
+
+This extension is deliberately less scaffolded. You will need to update more than one file.
+
+\begin{enumerate}
+    \item Add a function prototype for \texttt{insertPerson()} to \texttt{include/insert.h}.
+    \item Implement \texttt{insertPerson()} in \texttt{src/insert.cpp}.
+    \item Uncomment the guided \texttt{insertPerson()} test in \texttt{tests/test\_insert.cpp}.
+    \item Update the \texttt{test-insert} target in the \texttt{Makefile} so that it also compiles \texttt{src/Person.cpp}.
+    \item Run \texttt{make test-insert} again.
+\end{enumerate}
+
+\begin{infobox}
+When you add code that depends on another source file, the compiler needs to know about that source file.
+
+If your test uses the \texttt{Person} class, then the build command must also compile \texttt{src/Person.cpp}. This is why the \texttt{Makefile} needs to be updated for this extension.
+\end{infobox}
+
+\subsection{A.5 Reflect on the duplication}
+
+At this point, you may have implemented the same insertion algorithm for more than one type.
+
+Compare the implementations of \texttt{insertInt()}, \texttt{insertDouble()} and, if you completed the extension, \texttt{insertPerson()}.
+
+\begin{reflectionbox}
+Consider the following questions:
+
+\begin{itemize}
+    \item How many lines of code are almost identical between the functions?
+    \item Which parts of the algorithm actually changed?
+    \item If you discovered a bug in the insertion logic, how many functions would need to be fixed?
+    \item What risks are introduced when the same algorithm is copied into multiple places?
+\end{itemize}
+\end{reflectionbox}
+
+The problem you have just encountered is called \textbf{code duplication}. It is sometimes described as a \textbf{code smell}: a sign that the code works, but that its design may be more difficult to maintain than necessary.
+
+In Part B, you will address this problem directly by replacing several type-specific insertion functions with one reusable generic algorithm.
+
+
+\section{Part B -- One Algorithm, Many Types}
+
+\begin{learningoutcomes}
+By the end of this section, you should be able to:
+\begin{itemize}
+    \item explain how function templates reduce duplicated code;
+    \item implement a generic insertion algorithm using a function template;
+    \item use public tests to verify that one implementation works with multiple data types;
+    \item recognise refactoring as a way to improve code maintainability.
+\end{itemize}
+\end{learningoutcomes}
+
+\begin{infobox}[Estimated Effort]
+Estimated time: \textbf{25 minutes}
+\end{infobox}
+
+In Part A, you adapted the same insertion algorithm for more than one data type. This worked, but it also created duplicated code.
+
+In this part, you will replace those duplicated functions with one generic implementation.
+
+The key idea is simple:
+
+\begin{quote}
+If the algorithm is the same, only the type should vary.
+\end{quote}
+
+C++ allows us to express this idea using a \textbf{function template}.
+
+\subsection{B.1 Run the demonstration}
+
+Open the demonstration file:
+
+\begin{terminal}
+examples/demo02_generic_insert.cpp
+\end{terminal}
+
+Run it using:
+
+\begin{terminal}
+make demo02
+\end{terminal}
+
+At this stage, the demonstration may not behave correctly because the generic insertion function has not yet been implemented. That is expected.
+
+The purpose of the demonstration is to show the intended direction: one insertion function should eventually work for integers, doubles and strings.
+
+\subsection{B.2 Inspect the generic insertion function}
+
+Open:
+
+\begin{terminal}
+include/generic_insert.h
+\end{terminal}
+
+You should find a function template similar to the following:
+
+\begin{cppcode}
+template <typename T>
+bool insert(T*& values, int& size, int position, T value)
+{
+    // TODO: Implement the generic insertion algorithm.
+    return false;
+}
+\end{cppcode}
+
+The line:
+
+\begin{cppcode}
+template <typename T>
+\end{cppcode}
+
+tells the compiler that this function uses a placeholder type called \mintinline{cpp}{T}.
+
+Whenever the function is used, the compiler works out what \mintinline{cpp}{T} should be.
+
+For example:
+
+\begin{cppcode}
+insert(numbers, size, 2, 99);              // T is int
+insert(values, size, 1, 9.9);              // T is double
+insert(words, size, 2, std::string("hi")); // T is std::string
+\end{cppcode}
+
+You do not need to write three separate insertion functions. The compiler generates the appropriate version from the template.
+
+\begin{tipbox}
+\textbf{Did you notice?}
+
+The insertion algorithm itself never cared whether it was inserting integers, doubles or strings.
+
+The only thing that changed was the type of data being stored.
+\end{tipbox}
+
+\subsection{B.3 Use the tests to guide your implementation}
+
+Run the public tests for the generic insertion function:
+
+\begin{terminal}
+make test-generic-insert
+\end{terminal}
+
+The tests are designed to guide your implementation incrementally.
+
+Your task is to complete \mintinline{cpp}{insert()} in \mintinline{text}{include/generic_insert.h} by adapting the algorithm from \mintinline{cpp}{insertInt()}.
+
+As you implement the function, remember:
+
+\begin{itemize}
+    \item \mintinline{cpp}{int} becomes \mintinline{cpp}{T};
+    \item \mintinline{cpp}{int*} becomes \mintinline{cpp}{T*};
+    \item the insertion algorithm itself should not change.
+\end{itemize}
+
+After each small change, run the tests again:
+
+\begin{terminal}
+make test-generic-insert
+\end{terminal}
+
+Continue until the tests pass.
+
+\begin{commonerror}
+A common mistake is to change the algorithm while converting it into a template.
+
+The logic for checking the position, allocating the new array, copying the existing values and updating the pointer should be the same as before. The main difference is that the type is now represented by \mintinline{cpp}{T}.
+\end{commonerror}
+
+\subsection{B.4 Run the demonstration again}
+
+Once the tests pass, run the demonstration again:
+
+\begin{terminal}
+make demo02
+\end{terminal}
+
+This time, the same insertion function should work with several different data types.
+
+You have now replaced several type-specific insertion functions with one reusable generic algorithm.
+
+\subsection{B.5 From duplication to refactoring}
+
+The transformation from Part A to Part B is an example of \textbf{refactoring}.
+
+Refactoring means improving the structure of existing code without changing what the code is supposed to do.
+
+In this case, the behaviour remains the same:
+
+\begin{itemize}
+    \item insert a value at a valid position;
+    \item preserve the existing values;
+    \item increase the array size;
+    \item reject invalid positions.
+\end{itemize}
+
+What changed is the design.
+
+Instead of maintaining several almost-identical functions, you now have one generic function.
+
+\begin{figure}[H]
+\centering
+
+\begin{tikzpicture}[
+    node distance=7mm,
+    specific/.style={
+        rounded corners=2mm,
+        draw=CSCAmber,
+        fill=CSCLightAmber,
+        thick,
+        minimum width=4.1cm,
+        minimum height=8mm,
+        align=center,
+        font=\small\sffamily
+    },
+    smell/.style={
+        rounded corners=2mm,
+        draw=CSCRed,
+        fill=CSCLightRed,
+        thick,
+        minimum width=4.1cm,
+        minimum height=8mm,
+        align=center,
+        font=\small\sffamily\bfseries
+    },
+    action/.style={
+        rounded corners=2mm,
+        draw=CSCGreen,
+        fill=CSCLightGreen,
+        thick,
+        minimum width=4.1cm,
+        minimum height=8mm,
+        align=center,
+        font=\small\sffamily\bfseries
+    },
+    generic/.style={
+        rounded corners=2mm,
+        draw=CSCEngineering,
+        fill=CSCLightEngineering,
+        thick,
+        minimum width=5.0cm,
+        minimum height=8mm,
+        align=center,
+        font=\small\sffamily
+    },
+    diagramarrow/.style={
+        -{Latex[length=2mm]},
+        thick,
+        draw=black!55
+    }
+]
+
+\node[specific] (int) {\mintinline{cpp}{insertInt()}};
+\node[specific, below=of int] (double) {\mintinline{cpp}{insertDouble()}};
+\node[specific, below=of double] (person) {\mintinline{cpp}{insertPerson()}};
+
+\node[smell, right=18mm of double] (codesmell) {Code Smell\\[-1mm]\footnotesize repeated algorithm};
+
+\node[action, below=13mm of codesmell] (refactor) {Refactor};
+
+\node[generic, below=13mm of refactor] (genericinsert) {
+\mintinline{cpp}{template <typename T>}\\
+\mintinline{cpp}{bool insert(...)}
+};
+
+\draw[diagramarrow] (int.east) -- (codesmell.west);
+\draw[diagramarrow] (double.east) -- (codesmell.west);
+\draw[diagramarrow] (person.east) -- (codesmell.west);
+
+\draw[diagramarrow] (codesmell) -- (refactor);
+\draw[diagramarrow] (refactor) -- (genericinsert);
+
+\end{tikzpicture}
+
+\caption{The Abstraction Journey -- From repeated algorithms to one generic algorithm.}
+\label{fig:generic-insert-refactor}
+\end{figure}
+
+\begin{importantnote}
+One well-tested generic algorithm is usually easier to maintain than many almost-identical implementations.
+
+Templates are not only a way to reduce typing. More importantly, they help reduce duplication and improve maintainability.
+\end{importantnote}
+
+\begin{reflectionbox}
+Look back at the code from Part A and Part B.
+
+\begin{itemize}
+    \item How many insertion algorithms did you have at the end of Part A?
+    \item How many insertion algorithms do you have now?
+    \item Which version would you rather maintain if a bug was discovered next week?
+\end{itemize}
+\end{reflectionbox}
+
+\section{Part C -- One Container, Many Types}
+
+\begin{learningoutcomes}
+By the end of this section, you should be able to:
+\begin{itemize}
+    \item explain how class templates allow an entire container to be reused with different data types;
+    \item implement a generic indexing operator using a class template;
+    \item use public tests to guide incremental implementation;
+    \item explain why exceptions improve the safety of a data structure.
+\end{itemize}
+\end{learningoutcomes}
+
+\begin{infobox}[Estimated Effort]
+Estimated time: \textbf{25 minutes}
+\end{infobox}
+
+In Part B, you transformed several type-specific insertion functions into one reusable generic algorithm.
+
+In this part, you will take the next step.
+
+Instead of making an individual function generic, you will make an entire \textbf{container} generic.
+
+A single implementation of \mintinline{cpp}{SafeArray<T>} should behave correctly regardless of whether it stores integers, strings or user-defined objects.
+
+This is another example of abstraction: the behaviour of the container remains the same, while only the element type changes.
+
+\subsection{C.1 Observe the demonstration}
+
+Run:
+
+\begin{terminal}
+make demo03
+\end{terminal}
+
+Observe the behaviour of the supplied demonstration.
+
+You should notice that:
+
+\begin{itemize}
+    \item \mintinline{cpp}{SafeArray<int>} can be created successfully;
+    \item \mintinline{cpp}{SafeArray<std::string>} behaves in exactly the same way;
+    \item attempting to create an array with an invalid size generates an exception;
+    \item the exception is handled, allowing the program to continue executing normally.
+\end{itemize}
+
+Although the container already supports multiple data types, one important operation is still incomplete.
+
+Your task is to finish the implementation of the indexing operator.
+
+\subsection{C.2 Generalising an entire container}
+
+The insertion algorithm from Part B became generic because only the element type changed.
+
+Exactly the same idea applies here.
+
+Rather than writing separate array classes such as:
+
+\begin{cppcode}
+IntArray
+DoubleArray
+StringArray
+\end{cppcode}
+
+one generic container can represent them all:
+
+\begin{cppcode}
+SafeArray<T>
+\end{cppcode}
+
+The implementation of the container remains the same.
+
+Only the type represented by \mintinline{cpp}{T} changes.
+
+\subsection{C.3 A short detour: exceptions in C++}
+
+Before implementing the indexing operator, it is useful to understand how \mintinline{cpp}{SafeArray} reports errors.
+
+The constructor already checks that the requested array size is valid.
+
+If an invalid size is supplied, it throws a \mintinline{cpp}{std::invalid_argument} exception.
+
+You have already seen this behaviour when running the demonstration.
+
+C++ provides several standard exception types.
+
+For this practical, you will encounter two of them:
+
+\begin{center}
+\begin{tabular}{p{0.35\linewidth} p{0.55\linewidth}}
+\toprule
+\textbf{Exception} & \textbf{Typical use} \\
+\midrule
+\mintinline{cpp}{std::invalid_argument} & An invalid value is supplied to a function or constructor. \\
+\mintinline{cpp}{std::out_of_range} & An attempt is made to access an element outside the valid range. \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The demonstration also introduces three important C++ keywords:
+
+\begin{itemize}
+    \item \mintinline{cpp}{throw}
+    \item \mintinline{cpp}{try}
+    \item \mintinline{cpp}{catch}
+\end{itemize}
+
+You do not need to become an expert in exception handling today.
+
+Simply recognise the pattern:
+
+\begin{itemize}
+    \item detect an invalid situation;
+    \item throw an appropriate exception;
+    \item catch it elsewhere if the program can recover.
+\end{itemize}
+
+\subsection{C.4 Implement the indexing operator}
+
+Open:
+
+\begin{terminal}
+include/SafeArray.h
+\end{terminal}
+
+Locate:
+
+\begin{cppcode}
+T& operator[](int index)
+\end{cppcode}
+
+Your task is to complete the implementation.
+
+Begin by checking whether the requested index is valid.
+
+If it is not, throw a \mintinline{cpp}{std::out_of_range} exception.
+
+Otherwise, return the requested element.
+
+Run the public tests frequently while implementing your solution:
+
+\begin{terminal}
+make test-safe-array
+\end{terminal}
+
+Rather than writing the entire function in one attempt, allow the tests to guide your progress.
+
+\begin{commonerror}
+The indexing operator should always validate the supplied index \textbf{before} attempting to access the array.
+
+Returning an element before checking the bounds can lead to undefined behaviour and difficult-to-find bugs.
+\end{commonerror}
+
+\subsection{C.5 Verify your implementation}
+
+Once the tests pass, rerun the demonstration.
+
+\begin{terminal}
+make demo03
+\end{terminal}
+
+Confirm that the container behaves correctly for every supported type.
+
+\begin{tipbox}
+\textbf{Did you notice?}
+
+The implementation of \mintinline{cpp}{SafeArray<T>} never depends on whether it stores integers, strings or \mintinline{cpp}{Person} objects.
+
+Only the type represented by \mintinline{cpp}{T} changes.
+
+The container itself remains exactly the same.
+\end{tipbox}
+
+\subsection{C.6 Abstraction in Action}
+
+The pattern from Part B now appears at a higher level of abstraction.
+
+Instead of replacing several repeated functions with one generic function, you are replacing the idea of several specialised containers with one reusable class template.
+
+\begin{figure}[H]
+\centering
+
+\begin{tikzpicture}[
+    node distance=7mm,
+    concrete/.style={
+        rounded corners=2mm,
+        draw=CSCAmber,
+        fill=CSCLightAmber,
+        thick,
+        minimum width=4.6cm,
+        minimum height=8mm,
+        align=center,
+        font=\small\sffamily
+    },
+    designnote/.style={
+        rounded corners=2mm,
+        draw=CSCGreen,
+        fill=CSCLightGreen,
+        thick,
+        minimum width=4.6cm,
+        minimum height=8mm,
+        align=center,
+        font=\small\sffamily\bfseries
+    },
+    generic/.style={
+        rounded corners=2mm,
+        draw=CSCEngineering,
+        fill=CSCLightEngineering,
+        thick,
+        minimum width=5.2cm,
+        minimum height=8mm,
+        align=center,
+        font=\small\sffamily
+    },
+    diagramarrow/.style={
+        -{Latex[length=2mm]},
+        thick,
+        draw=black!55
+    }
+]
+
+\node[concrete] (intarray) {\mintinline{cpp}{SafeArray<int>}};
+\node[concrete, below=of intarray] (doublearray) {\mintinline{cpp}{SafeArray<double>}};
+\node[concrete, below=of doublearray] (personarray) {\mintinline{cpp}{SafeArray<Person>}};
+
+\node[designnote, right=18mm of doublearray] (samedesign) {Same container\\[-1mm]\footnotesize different element type};
+
+\node[generic, below=14mm of samedesign] (genericarray) {
+\mintinline{cpp}{template <typename T>}\\
+\mintinline{cpp}{class SafeArray}
+};
+
+\draw[diagramarrow] (intarray.east) -- (samedesign.west);
+\draw[diagramarrow] (doublearray.east) -- (samedesign.west);
+\draw[diagramarrow] (personarray.east) -- (samedesign.west);
+
+\draw[diagramarrow] (samedesign) -- (genericarray);
+
+\end{tikzpicture}
+
+\caption{The Abstraction Journey -- From specialised containers to one generic container.}
+\label{fig:safe-array-template}
+\end{figure}
+
+\begin{importantnote}
+Good abstractions do more than eliminate duplicated code.
+
+They allow the same design to be reused in many different contexts without changing the behaviour of the software.
+\end{importantnote}
+
+\begin{reflectionbox}
+In Part B you generalised an algorithm.
+
+In this part you have generalised an entire container.
+
+Consider the following questions:
+
+\begin{itemize}
+    \item Which parts of \mintinline{cpp}{SafeArray<T>} depend on the stored type?
+    \item Which parts remain identical regardless of the element type?
+    \item How does maintaining one generic container compare with maintaining several specialised versions?
+\end{itemize}
+\end{reflectionbox}
+
+\section{Part D -- One Abstract Data Type, Many Types}
+
+\begin{learningoutcomes}
+By the end of this section, you should be able to:
+\begin{itemize}
+    \item extend a generic Abstract Data Type by implementing additional member functions;
+    \item recognise the requirements placed on a type used within a template;
+    \item verify new functionality using public tests;
+    \item explain how templates promote reusable software design.
+\end{itemize}
+\end{learningoutcomes}
+
+\begin{infobox}[Estimated Effort]
+Estimated time: \textbf{25 minutes}
+\end{infobox}
+
+In Part C you transformed an entire container into a reusable class template.
+
+In this final part, you will apply exactly the same idea to a complete Abstract Data Type (ADT).
+
+Rather than creating different stack implementations for different types, you will extend a single generic implementation that already works for many kinds of data.
+
+\subsection{D.1 Observe the demonstration}
+
+Run the supplied demonstration:
+
+\begin{terminal}
+make demo04
+\end{terminal}
+
+Observe that exactly the same stack implementation can already store:
+
+\begin{itemize}
+    \item integers;
+    \item strings;
+    \item \mintinline{cpp}{Person} objects.
+\end{itemize}
+
+The existing stack operations behave identically regardless of the stored type.
+
+However, several useful operations are still missing.
+
+Those are the functions you will implement in this part.
+
+\subsection{D.2 Inspect the Stack interface}
+
+Open:
+
+\begin{terminal}
+include/Stack.h
+\end{terminal}
+
+Locate the following member functions:
+
+\begin{cppcode}
+bool operator==(const Stack<T>& other) const;
+
+bool search(const T& value) const;
+
+void print(std::ostream& out) const;
+\end{cppcode}
+
+The stack implementation already provides the core ADT operations.
+
+Your task is to extend that implementation with additional behaviour while preserving its existing functionality.
+
+\subsection{D.3 Implement equality}
+
+Begin with
+
+\begin{cppcode}
+bool operator==(const Stack<T>& other) const;
+\end{cppcode}
+
+Two stacks should compare equal if:
+
+\begin{itemize}
+    \item they contain the same number of elements;
+    \item corresponding elements compare equal;
+    \item the elements appear in the same order.
+\end{itemize}
+
+Use the public tests to guide your implementation:
+
+\begin{terminal}
+make test-stack
+\end{terminal}
+
+\subsection{D.4 Implement searching}
+
+Next implement
+
+\begin{cppcode}
+bool search(const T& value) const;
+\end{cppcode}
+
+Traverse the stack from top to bottom.
+
+Return:
+
+\begin{itemize}
+    \item \mintinline{cpp}{true} if the requested value is found;
+    \item \mintinline{cpp}{false} otherwise.
+\end{itemize}
+
+Notice that the search algorithm itself does not depend on the stored type.
+
+\subsection{D.5 Implement printing}
+
+Finally implement
+
+\begin{cppcode}
+void print(std::ostream& out) const;
+\end{cppcode}
+
+Unlike the previous two functions, printing introduces an additional requirement.
+
+The stack implementation does not know how to display an arbitrary object.
+
+Instead, it relies on the stored type supporting the stream insertion operator:
+
+\begin{cppcode}
+std::cout << value;
+\end{cppcode}
+
+This operation already exists for:
+
+\begin{itemize}
+    \item built-in numeric types;
+    \item \mintinline{cpp}{std::string};
+    \item the supplied \mintinline{cpp}{Person} class.
+\end{itemize}
+
+You do not need to understand how \mintinline{cpp}{operator<<} is implemented.
+
+Simply recognise that templates sometimes require the stored type to provide particular operations.
+
+\begin{tipbox}
+\textbf{Did you notice?}
+
+The stack implementation itself never changed.
+
+Only the capabilities provided by the stored type changed.
+
+Templates allow one implementation to be reused while relying on each type to provide the operations it requires.
+\end{tipbox}
+
+\begin{commonerror}
+A template can only use operations that are available for the stored type.
+
+For example:
+
+\begin{itemize}
+    \item equality requires \mintinline{cpp}{operator==};
+    \item printing requires \mintinline{cpp}{operator<<}.
+\end{itemize}
+
+If those operations are not defined for a particular type, the template cannot use them.
+\end{commonerror}
+
+\subsection{D.6 Verify your implementation}
+
+Run the public tests:
+
+\begin{terminal}
+make test-stack
+\end{terminal}
+
+Once all tests pass, rerun the demonstration:
+
+\begin{terminal}
+make demo04
+\end{terminal}
+
+Confirm that all three operations behave correctly for every supplied data type.
+
+\subsection{D.7 The Abstraction Journey}
+
+Throughout this practical, you have progressively generalised larger and larger software components.
+
+This final step applies exactly the same idea to an entire Abstract Data Type.
+
+\begin{figure}[H]
+\centering
+
+\begin{tikzpicture}[
+    node distance=7mm,
+    concrete/.style={
+        rounded corners=2mm,
+        draw=CSCAmber,
+        fill=CSCLightAmber,
+        thick,
+        minimum width=4.8cm,
+        minimum height=8mm,
+        align=center,
+        font=\small\sffamily
+    },
+    designnote/.style={
+        rounded corners=2mm,
+        draw=CSCGreen,
+        fill=CSCLightGreen,
+        thick,
+        minimum width=4.8cm,
+        minimum height=8mm,
+        align=center,
+        font=\small\sffamily\bfseries
+    },
+    generic/.style={
+        rounded corners=2mm,
+        draw=CSCEngineering,
+        fill=CSCLightEngineering,
+        thick,
+        minimum width=5.3cm,
+        minimum height=8mm,
+        align=center,
+        font=\small\sffamily
+    },
+    diagramarrow/.style={
+        -{Latex[length=2mm]},
+        thick,
+        draw=black!55
+    }
+]
+
+\node[concrete] (s1) {\mintinline{cpp}{Stack<int>}};
+\node[concrete, below=of s1] (s2) {\mintinline{cpp}{Stack<std::string>}};
+\node[concrete, below=of s2] (s3) {\mintinline{cpp}{Stack<Person>}};
+
+\node[designnote, right=18mm of s2]
+      (design)
+      {Same ADT\\[-1mm]\footnotesize different element type};
+
+\node[generic, below=14mm of design]
+      (generic)
+{
+\mintinline{cpp}{template <typename T>}\\
+\mintinline{cpp}{class Stack}
+};
+
+\draw[diagramarrow] (s1.east) -- (design.west);
+\draw[diagramarrow] (s2.east) -- (design.west);
+\draw[diagramarrow] (s3.east) -- (design.west);
+
+\draw[diagramarrow] (design) -- (generic);
+
+\end{tikzpicture}
+
+\caption{The Abstraction Journey -- From specialised Abstract Data Types to one generic Abstract Data Type.}
+\label{fig:stack-template}
+\end{figure}
+
+\begin{importantnote}
+Templates allow software engineers to design reusable components rather than isolated implementations.
+
+As long as a type provides the operations required by the template, the same implementation can be reused without modification.
+\end{importantnote}
+
+\begin{reflectionbox}
+Looking back over this practical, notice how the same engineering idea has been applied repeatedly.
+
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+\textbf{Part} & \textbf{What became generic?} \\
+\midrule
+Part A & Nothing \\
+Part B & An algorithm \\
+Part C & A container \\
+Part D & An Abstract Data Type \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Consider the following questions:
+
+\begin{itemize}
+    \item What remained unchanged as each abstraction became more general?
+    \item What changed?
+    \item Why is this progression useful when developing software?
+\end{itemize}
+
+Keep these ideas in mind as you move into the next practical, where you will begin applying generic data structures to increasingly sophisticated algorithms.
+\end{reflectionbox}
+
+
+\section{Fast Finisher Challenges}
+
+If you have completed all four parts of this practical and would like to explore generic programming further, consider attempting one or more of the following extensions.
+
+\begin{enumerate}
+    \item Modify \mintinline{cpp}{SafeArray<T>} so that it supports automatic resizing when the array becomes full.
+    \item Add a \mintinline{cpp}{reverse()} function to \mintinline{cpp}{Stack<T>}.
+    \item Extend \mintinline{cpp}{search()} so that it returns the position of the matching element instead of a Boolean result.
+    \item Create your own class and verify that it works correctly with both \mintinline{cpp}{SafeArray<T>} and \mintinline{cpp}{Stack<T>}.
+\end{enumerate}
+
+These activities are optional and are intended to deepen your understanding of generic programming.
+
+\frontsection{Reflection}
+
+Throughout this practical, you progressively applied the same engineering idea at increasingly higher levels of abstraction.
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+\textbf{Part} & \textbf{Engineering Problem} & \textbf{Engineering Solution} \\
+\midrule
+A & Repeated implementations & Code smell identified \\
+B & Repeated algorithms & Generic algorithm \\
+C & Specialised containers & Generic container \\
+D & Specialised ADTs & Generic Abstract Data Type \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Notice that the programming language changed very little throughout the practical.
+
+Instead, your focus gradually shifted from solving one specific problem to recognising repeated patterns, identifying opportunities for abstraction, and designing reusable software components.
+
+These are habits that extend well beyond C++ and form part of the way software engineers approach increasingly complex systems.
+
+\frontsection{Wrap-up}
+
+In this practical you explored how templates can be used to reduce code duplication and create reusable software components.
+
+You began by implementing several type-specific functions before identifying the resulting code duplication as a design problem. You then applied templates to progressively generalise an algorithm, a container and finally an entire Abstract Data Type.
+
+Although the examples in this practical focused on C++ templates, the underlying engineering ideas are language independent. Recognising repeated patterns, refactoring duplicated code and designing reusable abstractions are fundamental software engineering skills.
+
+In the next practical, you will begin applying these reusable data structures to increasingly sophisticated algorithms. While the problems become more complex, the engineering workflow introduced in this practical will remain the same.
+
+\begin{figure}[H]
+\centering
+
+\definecolor{WorkflowProblem}{HTML}{EAF4EA}
+\definecolor{WorkflowProblemFrame}{HTML}{4F8A5B}
+\definecolor{WorkflowSolution}{HTML}{FFF3D6}
+\definecolor{WorkflowSolutionFrame}{HTML}{B88300}
+\definecolor{WorkflowDesign}{HTML}{F3EAF7}
+\definecolor{WorkflowDesignFrame}{HTML}{7A4E9D}
+
+\begin{tikzpicture}[
+    node distance=6mm,
+    workflowstep/.style={
+        rounded corners=2mm,
+        draw=black!35,
+        fill=white,
+        minimum width=3cm,
+        minimum height=7mm,
+        align=center,
+        font=\small\sffamily
+    },
+    workflowcomplete/.style={
+    workflowstep,
+    draw=CSCGreen,
+    fill=CSCLightGreen,
+    very thick,
+    text=CSCGreen
+},
+    workflowarrow/.style={
+        -{Latex[length=2mm]},
+        thick,
+        draw=black!55
+    },
+    phaselabel/.style={
+        font=\bfseries\sffamily,
+        align=center
+    }
+]
+
+% Phase 1 nodes
+\node[phaselabel, text=WorkflowProblemFrame] (p1title) {Understand the Problem};
+\node[workflowstep, below=of p1title] (predict) {Predict};
+\node[workflowstep, below=of predict] (observe) {Observe};
+\node[workflowstep, below=of observe] (understand) {Understand};
+
+% Phase 2 nodes
+\node[phaselabel, text=WorkflowSolutionFrame, right=18mm of p1title] (p2title) {Develop the Solution};
+\node[workflowstep, below=of p2title] (test) {Test};
+\node[workflowstep, below=of test] (implement) {Implement};
+\node[workflowstep, below=of implement] (refine) {Refine};
+
+% Phase 3 nodes
+\node[phaselabel, text=WorkflowDesignFrame, right=18mm of p2title] (p3title) {Improve the Design};
+\node[workflowstep, below=of p3title] (smell) {Detect Code Smell};
+\node[workflowstep, below=of smell] (refactor) {Refactor};
+\node[workflowcomplete, below=of refactor] (reuse) {{\color{CSCGreen}\faCheckCircle}\ Reuse};
+
+% Phase background boxes
+% \node[
+%     draw=WorkflowProblemFrame,
+%     fill=WorkflowProblem,
+%     rounded corners=3mm,
+%     thick,
+%     fit=(p1title)(predict)(observe)(understand),
+%     inner sep=4mm
+% ] (phase1box) {};
+
+% \node[
+%     draw=WorkflowSolutionFrame,
+%     fill=WorkflowSolution,
+%     rounded corners=3mm,
+%     thick,
+%     fit=(p2title)(test)(implement)(refine),
+%     inner sep=4mm
+% ] (phase2box) {};
+
+% \node[
+%     draw=WorkflowDesignFrame,
+%     fill=WorkflowDesign,
+%     rounded corners=3mm,
+%     thick,
+%     fit=(p3title)(smell)(refactor)(reuse),
+%     inner sep=4mm
+% ] (phase3box) {};
+
+% Keep background boxes behind content
+\begin{scope}[on background layer]
+    \node[
+        draw=WorkflowProblemFrame,
+        fill=WorkflowProblem,
+        rounded corners=3mm,
+        thick,
+        fit=(p1title)(predict)(observe)(understand),
+        inner sep=4mm
+    ] {};
+    \node[
+        draw=WorkflowSolutionFrame,
+        fill=WorkflowSolution,
+        rounded corners=3mm,
+        thick,
+        fit=(p2title)(test)(implement)(refine),
+        inner sep=4mm
+    ] {};
+    \node[
+        draw=WorkflowDesignFrame,
+        fill=WorkflowDesign,
+        rounded corners=3mm,
+        thick,
+        fit=(p3title)(smell)(refactor)(reuse),
+        inner sep=4mm
+    ] {};
+\end{scope}
+
+% Internal arrows
+\draw[workflowarrow] (predict) -- (observe);
+\draw[workflowarrow] (observe) -- (understand);
+
+\draw[workflowarrow] (test) -- (implement);
+\draw[workflowarrow] (implement) -- (refine);
+
+\draw[workflowarrow] (smell) -- (refactor);
+\draw[workflowarrow] (refactor) -- (reuse);
+
+% Phase-to-phase arrows
+\draw[workflowarrow] (understand.east) -- ++(7mm,0) |- (test.west);
+\draw[workflowarrow] (refine.east) -- ++(7mm,0) |- (smell.west);
+
+\end{tikzpicture}
+
+\caption{The CSC2059 engineering workflow completed in this practical.}
+\label{fig:csc2059-engineering-workflow-end}
+\end{figure}
+
+
+\begin{importantnote}
+
+Throughout this practical you followed the CSC2059 Engineering Workflow from identifying a problem through to designing a reusable solution.
+
+Although the examples focused on templates, the same workflow can be applied whenever you develop, test and improve software.
+
+\end{importantnote}
+
+\frontsection{Submission Checklist}
+
+Before leaving the laboratory, make sure you have:
+
+\begin{itemize}
+    \item completed each core activity;
+    \item run all demonstrations successfully;
+    \item passed the supplied public tests;
+    \item committed your work with meaningful commit messages;
+    \item pushed your latest changes to your GitHub Classroom repository.
+\end{itemize}
+
+\end{document}

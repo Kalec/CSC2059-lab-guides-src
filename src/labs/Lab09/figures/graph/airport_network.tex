@@ -1,0 +1,367 @@
+% Reusable airport network layout and drawing commands.
+
+\newcommand{\AirportNetworkCoordinates}{%
+    % Main connected component
+    \coordinate (BFS) at (2.4, -0.5);
+    \coordinate (LHR) at (6.9, -1.4);
+    \coordinate (AMS) at (5.0,  0.8);
+    \coordinate (CDG) at (7.6,  1.8);
+    
+    \coordinate (FRA) at (4.0,  3.2);
+    \coordinate (FCO) at (0.2,  0.8);
+    \coordinate (MAD) at (4.4, -2.5);
+    \coordinate (LIS) at (0.2, -2.5);
+
+    % Secondary connected component
+    \coordinate (KEF) at (0.2, 3.1);
+    \coordinate (OSL) at (2.5, 3.4);
+
+    % Isolated airports
+    \coordinate (EDI) at (8.8, 0.8);
+    \coordinate (ATH) at (8.8, -2.2);
+}
+\newcommand{\DrawAirportVertices}{%
+    \node[airport] at (BFS) {BFS};
+    \node[airport] at (LHR) {LHR};
+    \node[airport] at (AMS) {AMS};
+    \node[airport] at (CDG) {CDG};
+    \node[airport] at (FRA) {FRA};
+    \node[airport] at (FCO) {FCO};
+    \node[airport] at (MAD) {MAD};
+    \node[airport] at (LIS) {LIS};
+
+    \node[airport] at (KEF) {KEF};
+    \node[airport] at (OSL) {OSL};
+
+    \node[airport] at (EDI) {EDI};
+    \node[airport] at (ATH) {ATH};
+}
+
+\newcommand{\DrawAirportRoutes}[1][route]{%
+    % Main connected component
+    \draw[#1] (BFS) -- (LHR);
+    \draw[#1] (BFS) -- (AMS);
+    \draw[#1] (BFS) -- (FCO);
+
+    \draw[#1] (LHR) -- (CDG);
+    \draw[#1] (LHR) -- (MAD);
+
+    \draw[#1] (AMS) -- (CDG);
+    \draw[#1] (AMS) -- (FRA);
+
+    \draw[#1] (CDG) -- (FRA);
+
+    \draw[#1] (FRA) -- (FCO);
+
+    \draw[#1] (FCO) -- (LIS);
+
+    \draw[#1] (MAD) -- (LIS);
+
+    % Secondary connected component
+    \draw[#1] (KEF) -- (OSL);
+}
+\newcommand{\DrawAdjacencyList}{%
+    % BFS
+    \node[adjacency airport] (bfs) at (0,0) {BFS};
+    \node[adjacency neighbour] (bfs-lhr) at (2,0) {LHR};
+    \node[adjacency neighbour] (bfs-ams) at (4,0) {AMS};
+    \node[adjacency neighbour] (bfs-fco) at (6,0) {FCO};
+
+    \draw[adjacency arrow] (bfs) -- (bfs-lhr);
+    \draw[adjacency arrow] (bfs-lhr) -- (bfs-ams);
+    \draw[adjacency arrow] (bfs-ams) -- (bfs-fco);
+
+    % LHR
+    \node[adjacency airport] (lhr) at (0,-1) {LHR};
+    \node[adjacency neighbour] (lhr-bfs) at (2,-1) {BFS};
+    \node[adjacency neighbour] (lhr-cdg) at (4,-1) {CDG};
+    \node[adjacency neighbour] (lhr-mad) at (6,-1) {MAD};
+
+    \draw[adjacency arrow] (lhr) -- (lhr-bfs);
+    \draw[adjacency arrow] (lhr-bfs) -- (lhr-cdg);
+    \draw[adjacency arrow] (lhr-cdg) -- (lhr-mad);
+
+    % EDI
+    \node[adjacency airport] (edi) at (0,-2) {EDI};
+    \node[adjacency empty, anchor=west] at (1.4,-2) {no routes};
+}
+
+\newcommand{\DrawDFSActivePath}{%
+    \draw[route highlighted] (BFS) -- (LHR);
+    \draw[route highlighted] (LHR) -- (CDG);
+    \draw[route highlighted] (CDG) -- (AMS);
+}
+
+\newcommand{\DrawDFSProgressVertices}{%
+    % Previously visited airports
+    \node[
+        airport visited,
+        label={[order badge]135:1}
+    ] at (BFS) {BFS};
+
+    \node[
+        airport visited,
+        label={[order badge]-45:2}
+    ] at (LHR) {LHR};
+
+    \node[
+        airport visited,
+        label={[order badge]45:3}
+    ] at (CDG) {CDG};
+
+    % Current recursive call
+    \node[
+        airport active,
+        label={[order badge]135:4}
+    ] at (AMS) {AMS};
+
+    % Airports not yet visited
+    \node[airport] at (FRA) {FRA};
+    \node[airport] at (FCO) {FCO};
+    \node[airport] at (MAD) {MAD};
+    \node[airport] at (LIS) {LIS};
+
+    % Other connected component
+    \node[airport] at (KEF) {KEF};
+    \node[airport] at (OSL) {OSL};
+
+    % Isolated airports
+    \node[airport] at (EDI) {EDI};
+    \node[airport] at (ATH) {ATH};
+}
+
+\newcommand{\DrawDFSCallStack}{%
+    \node[
+        figure annotation,
+        font=\sffamily\small\bfseries
+    ] at (0,0.6) {Active recursive calls};
+
+    \node[stack frame] (call-bfs) at (0,0) {
+        depthFirst(BFS)
+    };
+
+    \node[stack frame] (call-lhr) at (0,-1.0) {
+        depthFirst(LHR)
+    };
+
+    \node[stack frame] (call-cdg) at (0,-2.0) {
+        depthFirst(CDG)
+    };
+
+    \node[stack frame active] (call-ams) at (0,-3.0) {
+        depthFirst(AMS)
+    };
+
+    \draw[stack arrow] (call-bfs) -- (call-lhr);
+    \draw[stack arrow] (call-lhr) -- (call-cdg);
+    \draw[stack arrow] (call-cdg) -- (call-ams);
+
+    \node[
+        figure annotation,
+        anchor=west,
+        text=blue!70!black
+    ] at (0,-3.5) {current call};
+}
+
+\newcommand{\HighlightAirportCycle}{%
+    \draw[cycle direction] (BFS) -- (LHR);
+    \draw[cycle direction] (LHR) -- (CDG);
+    \draw[cycle direction] (CDG) -- (AMS);
+    \draw[cycle direction] (AMS) -- (BFS);
+}
+
+\newcommand{\DrawCycleVertices}{%
+    % Airports forming the cycle
+    \node[airport active] at (BFS) {BFS};
+    \node[airport active] at (LHR) {LHR};
+    \node[airport active] at (CDG) {CDG};
+    \node[airport active] at (AMS) {AMS};
+
+    % Remaining airports
+    \node[airport] at (FRA) {FRA};
+    \node[airport] at (FCO) {FCO};
+    \node[airport] at (MAD) {MAD};
+    \node[airport] at (LIS) {LIS};
+
+    \node[airport] at (KEF) {KEF};
+    \node[airport] at (OSL) {OSL};
+
+    \node[airport] at (EDI) {EDI};
+    \node[airport] at (ATH) {ATH};
+}
+
+\newcommand{\DrawVisitedExplanation}{%
+    \node[cycle annotation] at (0,0) {
+        \textbf{Without \texttt{visited[]}:}
+
+        \medskip
+
+        \texttt{BFS}
+        $\rightarrow$
+        \texttt{LHR}
+        $\rightarrow$
+        \texttt{CDG}
+        $\rightarrow$
+        \texttt{AMS}
+        $\rightarrow$
+        \texttt{BFS}
+        $\rightarrow \cdots$
+
+        \medskip
+
+        The traversal can repeatedly return to airports that it has already explored.
+    };
+
+    \node[
+        cycle annotation,
+        draw=green!45!black,
+        fill=green!6,
+        text width=42mm
+    ] at (0,-3.2) {
+        \textbf{With \texttt{visited[]}:}
+
+        \medskip
+
+        Before following a route, DFS checks whether the destination has already been visited.
+
+        \medskip
+
+        Each airport is therefore processed at most once.
+    };
+}
+
+\newcommand{\DrawConnectedComponentRoutes}{%
+    % Main connected component
+    \draw[component main route] (BFS) -- (LHR);
+    \draw[component main route] (BFS) -- (AMS);
+    \draw[component main route] (BFS) -- (FCO);
+
+    % Retain the remaining routes from the main component here,
+    % using component main route.
+    \draw[component main route] (LHR) -- (CDG);
+    \draw[component main route] (LHR) -- (MAD);
+
+    \draw[component main route] (AMS) -- (CDG);
+    \draw[component main route] (AMS) -- (FRA);
+
+    \draw[component main route] (CDG) -- (FRA);
+
+    \draw[component main route] (FRA) -- (FCO);
+
+    \draw[component main route] (FCO) -- (LIS);
+
+    \draw[component main route] (MAD) -- (LIS);
+
+
+    % Secondary connected component
+    \draw[component secondary route] (KEF) -- (OSL);
+}
+
+\newcommand{\DrawConnectedComponentVertices}{%
+    % Main connected component
+    \node[component main] at (BFS) {BFS};
+    \node[component main] at (LHR) {LHR};
+    \node[component main] at (AMS) {AMS};
+    \node[component main] at (CDG) {CDG};
+    \node[component main] at (FRA) {FRA};
+    \node[component main] at (FCO) {FCO};
+    \node[component main] at (MAD) {MAD};
+    \node[component main] at (LIS) {LIS};
+
+    % Secondary connected component
+    \node[component secondary] at (KEF) {KEF};
+    \node[component secondary] at (OSL) {OSL};
+
+    % Isolated components
+    \node[component isolated] at (EDI) {EDI};
+    \node[component isolated] at (ATH) {ATH};
+}
+
+\newcommand{\DrawConnectedComponentLabels}{%
+    \node[
+        figure annotation,
+        text=green!45!black,
+        font=\sffamily\small\bfseries
+    ] at (4.6,-3.45) {Main connected component};
+
+    \node[
+        figure annotation,
+        text=orange!65!black,
+        font=\sffamily\small\bfseries
+    ] at (1.35,4.05) {Secondary component};
+
+    \node[
+        component isolated label
+    ] at (8.8,-3.05) {isolated airports};
+}
+
+\newcommand{\DrawWeightedAirportNetwork}{%
+    \DrawAirportRoutes[weighted route]
+
+    % Illustrative route distances
+    \path (BFS) -- (LHR)
+        node[route weight, above, sloped] {510 km};
+
+    \path (BFS) -- (AMS)
+        node[route weight, above, sloped] {760 km};
+
+    \path (BFS) -- (FCO)
+        node[route weight, above, sloped] {1,950 km};
+
+    \path (LHR) -- (CDG)
+        node[route weight, above, sloped] {350 km};
+
+    \path (LHR) -- (MAD)
+        node[route weight, below, sloped] {1,260 km};
+
+    \path (CDG) -- (AMS)
+        node[route weight, above, sloped] {430 km};
+
+    \path (KEF) -- (OSL)
+        node[route weight, below, sloped] {1,750 km};
+}
+
+\newcommand{\DrawWeightedAirportVertices}{%
+    \node[weighted airport] at (BFS) {BFS};
+    \node[weighted airport] at (LHR) {LHR};
+    \node[weighted airport] at (AMS) {AMS};
+    \node[weighted airport] at (CDG) {CDG};
+    \node[weighted airport] at (FRA) {FRA};
+    \node[weighted airport] at (FCO) {FCO};
+    \node[weighted airport] at (MAD) {MAD};
+    \node[weighted airport] at (LIS) {LIS};
+
+    \node[weighted airport] at (KEF) {KEF};
+    \node[weighted airport] at (OSL) {OSL};
+
+    \node[component isolated] at (EDI) {EDI};
+    \node[component isolated] at (ATH) {ATH};
+}
+
+\newcommand{\DrawWeightedGraphExplanation}{%
+    \node[weight annotation] at (0,0) {
+        \textbf{Weighted graph}
+
+        \medskip
+
+        Each route stores an additional value called a
+        \emph{weight}.
+
+        \medskip
+
+        A weight might represent:
+
+        \smallskip
+
+        \begin{tabular}{@{}l@{}}
+            $\bullet$ distance\\
+            $\bullet$ journey time\\
+            $\bullet$ ticket cost
+        \end{tabular}
+
+        \medskip
+
+        A shortest-path algorithm compares the total weight of
+        alternative routes.
+    };
+}

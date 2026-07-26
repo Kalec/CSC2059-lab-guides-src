@@ -1,0 +1,134 @@
+\documentclass{csc2059practical}
+
+\setpracticalnumber{2}
+\setpracticaltitle{Git, Testing, and the CSC2059 Workflow}
+\setpracticalsubtitle{Working like a careful C++ developer}
+\setpracticalauthor{Dr Giuseppe Trombino, Queen's University Belfast, School of EEECS}
+\setpracticaldate{}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\clearpage
+
+\begin{learningoutcomes}
+By the end of this practical, you should be able to:
+\begin{itemize}
+  \item open and work with a Classroom50 repository in VS Code;
+  \item run the public test suite using \texttt{make test};
+  \item interpret common compiler and test failures;
+  \item commit and push your work frequently using Git.
+\end{itemize}
+\end{learningoutcomes}
+
+\begin{workflowreminder}
+For every small change, follow the CSC2059 workflow:
+\begin{center}
+\textbf{edit $\rightarrow$ make test $\rightarrow$ interpret errors $\rightarrow$ commit $\rightarrow$ push $\rightarrow$ repeat}
+\end{center}
+Do not wait until the end of the practical to commit. Git is not a ceremonial gong struck only at sunset.
+\end{workflowreminder}
+
+\exercise{Clone and Open the Repository}{Estimated time: 10 minutes}
+
+\begin{exerciseobjectives}
+  \item Clone your Classroom50 repository.
+  \item Open the folder in VS Code.
+  \item Confirm that the expected files are present.
+\end{exerciseobjectives}
+
+Open a terminal and clone your repository:
+
+\begin{bashcode}
+git clone <your-repository-url>
+cd <your-repository-name>
+code .
+\end{bashcode}
+
+\begin{importantnote}
+Use VS Code for this module. Do not use Visual Studio. The build and testing workflow for CSC2059 assumes the supplied Makefile and terminal commands.
+\end{importantnote}
+
+\exercise{Run the Public Tests}{Estimated time: 15 minutes}
+
+Run the public tests before changing anything:
+
+\begin{bashcode}
+make test
+\end{bashcode}
+
+A failing test is not a disaster. It is information. Read it carefully before changing code.
+
+\begin{commonerror}
+If you see an error such as \texttt{No rule to make target}, check that you are running the command from the root folder of the repository, not from inside a subfolder.
+\end{commonerror}
+
+\begin{tipbox}
+Run \texttt{pwd} on macOS/Linux or \texttt{cd} on Windows PowerShell to check your current folder.
+\end{tipbox}
+
+\exercise{Implement a Small Change}{Estimated time: 25 minutes}
+
+Edit the relevant C++ file and implement one small piece of functionality.
+
+\begin{cppcode}
+int countLetters(const std::string& text) {
+    int count = 0;
+    for (char c : text) {
+        if (std::isalpha(static_cast<unsigned char>(c))) {
+            ++count;
+        }
+    }
+    return count;
+}
+\end{cppcode}
+
+After editing, run:
+
+\begin{bashcode}
+make test
+git status
+git add .
+git commit -m "Implement letter counting"
+git push
+\end{bashcode}
+
+\begin{challengebox}
+Can you add your own local test case before checking the supplied public tests again?
+\end{challengebox}
+
+\begin{reflectionbox}
+Briefly answer the following:
+\begin{itemize}
+  \item What was the first error message you encountered?
+  \item What did it actually mean?
+  \item What change fixed it?
+\end{itemize}
+\end{reflectionbox}
+
+\begin{wrapupbox}
+You have practised the full CSC2059 development loop: edit, test, diagnose, commit, push, and repeat. This workflow is deliberately simple, but it is also how larger software systems stay under control.
+\end{wrapupbox}
+
+\startappendices
+
+\section{Useful Git Commands}
+
+\begin{bashcode}
+git status
+git add .
+git commit -m "Short meaningful message"
+git push
+git log --oneline
+\end{bashcode}
+
+\section{Build Workflow}
+
+Recommended build command:
+
+\begin{bashcode}
+latexmk -lualatex -shell-escape example_practical.tex
+\end{bashcode}
+
+\end{document}
