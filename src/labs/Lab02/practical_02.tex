@@ -308,6 +308,23 @@ If the tests pass, that is a good sign. If the tests fail, they are trying to he
 
 In this practical, you will receive your work through Classroom50. This is the same workflow that will be used throughout the module and in future practical assessments.
 
+\begin{importantnote}
+\textbf{Windows Users}\par
+\medskip
+
+When this practical asks you to open a terminal, use the \textbf{CSC2059 Terminal} in Visual Studio Code.
+
+On University laboratory computers, Visual Studio Code may open PowerShell by default. If this happens, open the terminal profile selector and choose:
+
+\begin{terminal}
+CSC2059 Terminal
+\end{terminal}
+
+Do not use PowerShell, Command Prompt, or Git Bash for the command-line activities in this practical.
+
+On your own Windows computer, the CSC2059 Terminal should open automatically if you followed the \textbf{CSC2059 Development Environment: Windows Installation Guide}.
+\end{importantnote}
+
 \subsection{Step 1: Access your repository}
 
 Open the link to the Lab Repo provided by your lecturer in Canvas.
@@ -796,9 +813,13 @@ Example:
 make: command not found
 \end{terminal}
 
-This usually indicates that a compiler toolchain has not been installed.
+On Windows, first check that you are using the \textbf{CSC2059 Terminal} in Visual Studio Code.
 
-Refer to Appendix A for instructions on setting up a development environment on your own computer.
+Do not use PowerShell, Command Prompt, or Git Bash for CSC2059 command-line activities.
+
+If you are working on your own Windows computer and have not yet configured the CSC2059 development environment, follow the separate \textbf{CSC2059 Development Environment: Windows Installation Guide}.
+
+If this problem occurs on a University laboratory computer while using the CSC2059 Terminal, ask a demonstrator for assistance.
 \end{commonerror}
 
 \begin{commonerror}
@@ -1249,135 +1270,5 @@ Functions, files, and a bit of Git: that is a large part of the toolkit needed t
 Next time: putting these functions to work inside loops and data structures that are actually worth structuring.
 \end{wrapupbox}
 
-\startappendices
-
-\section{Setting Up Your Own Development Environment}
-
-This appendix is intended for students who wish to complete practical work on their own computers.
-
-Students working in University laboratories should already have the required software installed.
-
-\subsection{Windows Installation}
-
-For this module we recommend using the GCC compiler distributed through MSYS2.
-
-Download MSYS2 from:
-
-\begin{terminal}
-https://www.msys2.org/
-\end{terminal}
-
-Install MSYS2 in:
-
-\begin{terminal}
-C:\Apps\MSYS64
-\end{terminal}
-
-Open the MSYS2 UCRT64 terminal.
-
-Update the installation:
-
-\begin{bashcode}
-pacman -Syu
-\end{bashcode}
-
-You may be asked to restart the terminal and repeat the command.
-
-Install the required packages:
-
-\begin{bashcode}
-pacman -S --needed base-devel mingw-w64-ucrt-x86_64-gcc mingw-w64-ucrt-x86_64-gdb 
-pacman -S --needed mingw-w64-ucrt-x86_64-make mingw-w64-ucrt-x86_64-cmake
-\end{bashcode}
-
-Add the compiler binaries to your system PATH:
-
-\begin{terminal}
-C:\Apps\MSYS64\ucrt64\bin
-\end{terminal}
-
-Restart Visual Studio Code.
-
-Verify the installation:
-
-\begin{bashcode}
-g++ --version
-make --version
-git --version
-gdb --version
-\end{bashcode}
-
-\subsection{macOS Installation}
-
-Open Terminal and execute:
-
-\begin{bashcode}
-xcode-select --install
-\end{bashcode}
-
-This installs Apple's Command Line Tools, including the compiler and build tools required for this module.
-
-Verify the installation:
-
-\begin{bashcode}
-clang++ --version
-make --version
-git --version
-\end{bashcode}
-
-\begin{tipbox}
-On macOS, the \texttt{g++} command may point to Apple's \texttt{clang++} compiler. This is acceptable for CSC2059.
-\end{tipbox}
-
-\subsection{Recommended VS Code Extensions}
-
-Install the following extensions from the VS Code Marketplace:
-
-\begin{itemize}
-  \item \textbf{C/C++} by Microsoft: provides syntax highlighting, code completion, and debugging support;
-  \item \textbf{GitHub Pull Requests and Issues}: useful for interacting with GitHub repositories directly from VS Code.
-\end{itemize}
-
-\subsection{Verifying Your Environment}
-
-Open a terminal inside VS Code and run:
-
-\begin{bashcode}
-git --version
-g++ --version
-make --version
-\end{bashcode}
-
-If all commands display version information, your environment is correctly configured.
-
-\subsection{Testing Your Installation}
-
-Open your Practical 2 repository and run:
-
-\begin{bashcode}
-make run
-\end{bashcode}
-
-You should see output similar to:
-
-\begin{terminal}
-CSC2059 Practical 2: C++ Functions
-\end{terminal}
-
-Next, execute:
-
-\begin{bashcode}
-make test
-\end{bashcode}
-
-Initially, some tests are expected to fail because the practical scaffold contains incomplete implementations.
-
-As you complete the exercises, progressively more tests should pass. Eventually, you should see:
-
-\begin{terminal}
-All public tests passed.
-\end{terminal}
-
-Congratulations. Your development environment is ready to support the remainder of the module.
 
 \end{document}
