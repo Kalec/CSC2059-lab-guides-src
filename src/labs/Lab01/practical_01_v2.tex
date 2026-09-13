@@ -13,12 +13,9 @@
 
 \newcommand{\checkbox}{\ensuremath{\square}\;}
 
-
 % Git diff symbols. These can be moved into the template later.
 \newcommand{\gitplus}{\textcolor{GitGreen}{\texttt{+}}}
 \newcommand{\gitminus}{\textcolor{GitRed}{\texttt{-}}}
-
-
 
 \newtcolorbox{terminalplain}{%
   enhanced,
@@ -51,19 +48,15 @@
     },
     node distance=8mm
 ]
-
 \node[workflowstep] (edit) {Edit};
 \node[workflowstep, below=of edit] (test) {Test};
 \node[workflowstep, below=of test] (commit) {Commit};
 \node[workflowstep, below=of commit] (push) {Push};
-
 \draw[workflowarrow] (edit) -- (test);
 \draw[workflowarrow] (test) -- (commit);
 \draw[workflowarrow] (commit) -- (push);
-
 \end{tikzpicture}
 \end{figure}}
-
 
 \newcommand{\CSCGitWorkflowDiagram}{%
 \begin{figure}[htbp]
@@ -108,7 +101,6 @@
 \caption{The three places your work can exist in a local Git repository.}
 \end{figure}%
 }
-
 
 \newcommand{\CSCGitBranchSplitDiagram}{%
 \begin{figure}[htbp]
@@ -226,8 +218,6 @@
 \end{figure}%
 }
 
-
-
 \begin{document}
 \maketitle
 \tableofcontents
@@ -270,7 +260,7 @@ By the end of this lab, you should be able to:
 By the end of this lab, you should be able to:
 
 \begin{itemize}
-  \item \faCheck\ Set up Git without needing emergency technical support.
+  \item \faCheck\ Configure Git without needing emergency technical support.
   \item \faCheck\ Save your work properly instead of creating files called:
 \end{itemize}
 \begin{terminalplain}
@@ -349,283 +339,109 @@ It is far better to learn how to recover from a problem in Week 1 than during an
 
 Let's get started.
 
-\section{Optional: Installing Git and Visual Studio Code}
+\section{Preparing Your Development Environment}
 \begin{infobox}
-\textbf{Estimated time: 10-15 minutes}
+\textbf{Estimated time: 5 minutes}
 \end{infobox}
-\begin{importantnote}
-\textbf{Working in a University Lab?}\par
-\medskip
 
-You can skip most of this section.
+The software required for CSC2059 must be installed before you begin the practical exercises. This practical does not reproduce the installation instructions.
 
+\subsection{Using Your Own Windows Computer}
 
-Git and Visual Studio Code are already installed on the School laboratory machines.
+If you are working on your own Windows laptop or PC, follow the separate \textbf{CSC2059 Development Environment: Windows Installation Guide} before continuing with this practical.
 
+That guide installs and configures Visual Studio Code, Git, MSYS2 and the C++ development tools used throughout CSC2059. It also configures \textbf{CSC2059 Terminal} as the default terminal profile in Visual Studio Code.
 
-This section is only required if you are using your own computer. However, it's worth reading as there is important information within for the labs. Particularly step 3: configuring VS Code.
+Once the installation guide has been completed, selecting:
 
+\begin{terminalplain}
+Terminal -> New Terminal
+\end{terminalplain}
 
-\end{importantnote}
-\begin{learningoutcomes}
-\textbf{What You Will Learn}\par
-\medskip
-By the end of this section, you should be able to:
+should normally open the CSC2059 Terminal automatically.
 
-\begin{itemize}
-  \item Install Visual Studio Code.
-  \item Install Git.
-  \item Configure Visual Studio Code to use Git Bash.
-  \item Verify that Git is working correctly.
-\end{itemize}
-\end{learningoutcomes}
-\paragraph{Why Do I Need Git?}
-Throughout this module you will use Git to:
+\subsection{Using a University Laboratory Computer}
 
-\begin{itemize}
-  \item Access lab repositories.
-  \item Access coursework repositories.
-  \item Submit work through Classroom50.
-  \item Track changes to your code.
-\end{itemize}
-If Git is not installed and working correctly, none of those things become particularly enjoyable.
+The required software is already installed on the School laboratory computers. However, the default Visual Studio Code terminal on the laboratory machines is PowerShell.
+
+For CSC2059 work, Windows users should use the \textbf{CSC2059 Terminal} instead.
+
+Open Visual Studio Code and select:
+
+\begin{terminalplain}
+Terminal -> New Terminal
+\end{terminalplain}
+
+If PowerShell opens, use the terminal profile selector in the terminal panel and choose:
+
+\begin{terminalplain}
+CSC2059 Terminal
+\end{terminalplain}
 
 \begin{importantnote}
-
-Throughout this module we will use \textbf{Git Bash} in Windows as our command-line environment.
-
-
-Windows users should \textbf{not} use Command Prompt or PowerShell for the activities in this lab.
-
-
-Using Git Bash means that Windows, macOS, and Linux users can follow almost identical instructions throughout the module.
-
-
-\end{importantnote}
-\subsection{Windows Installation}
-\subsubsection{Install Visual Studio Code}
-Visit:
-
-\href{https://code.visualstudio.com}{https://code.visualstudio.com}
-
-Download and install Visual Studio Code.
-
-The default installation options are perfectly acceptable.
-
-Once installed, start Visual Studio Code to ensure it launches correctly. Close it after.
-
-\subsubsection{Install Git}
-Visit:
-
-\href{https://git-scm.com/downloads}{https://git-scm.com/downloads}
-
-Download and install \textbf{Git for Windows}.
-
-For most installation screens, the default options are perfectly acceptable.
-
-However, when asked about editors and terminal behaviour, ensure that:
-
-\begin{itemize}
-  \item Visual Studio Code is selected as the default editor.
-  \item Git is added to your system PATH.
-  \item Git Bash is installed.
-\end{itemize}
-Git installers contain a surprising number of options.
-
-This is normal.
-
-Try not to interpret it as a personality test.
-
-\subsubsection{Configure VS Code to Use Git Bash}
-To ensure that everybody follows the same instructions throughout the module, we will use \textbf{Git Bash} as the default terminal inside Visual Studio Code.
-
-\subsubsection{Open the command palette}
-Open Visual Studio Code.
-
-From the menu, select:
-
-View → Command Palette
-
-\subsubsection{Select the Default Terminal Profile}
-Type:
-
-Select Default Profile
-
-Choose:
-
-Git Bash
-
-\subsubsection{Open a New Terminal}
-Open a new terminal. From the menu, select:
-
-Terminal → New Terminal
-
-You should now see a Git Bash terminal.
-
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.85\textwidth]{../../../assets/figures/practical01/Config VSCode.png}
-\label{fig:gitbash}
-\caption{Configuring Git Bash as the default terminal in VS Code}
-\end{figure}
-\begin{reflectionbox}
-\textbf{Checkpoint}\par
+\textbf{Windows Users}\par
 \medskip
 
-Before continuing, confirm that:
+Use the \textbf{CSC2059 Terminal} for CSC2059 practical work.
 
+Do not use PowerShell, Command Prompt, or Git Bash for the command-line activities in this module.
+\end{importantnote}
 
-Git Bash appears as the active terminal.
+\subsection{macOS and Linux}
 
+On macOS or Linux, use the integrated terminal in Visual Studio Code. No special CSC2059 terminal profile is required.
 
-The terminal accepts commands.
+\subsection{Verify the Development Environment}
 
-
-Visual Studio Code is running correctly.
-
-
-\end{reflectionbox}
-\subsection{macOS Installation}
-\subsubsection{Install Visual Studio Code}
-Visit:
-
-\href{https://code.visualstudio.com}{https://code.visualstudio.com}
-
-Download and install Visual Studio Code.
-
-The default installation options are perfectly acceptable.
-
-Once installed, start Visual Studio Code to ensure it launches correctly. Close it.
-
-\subsubsection{Install Git}
-Open the Terminal application.
+Before continuing, Windows users should confirm that the correct CSC2059 environment is active.
 
 Run:
 
 \begin{terminalplain}
+which g++
+which make
+which git
+\end{terminalplain}
+
+On the School Windows laboratory machines, and on a Windows computer configured using the CSC2059 installation guide, the expected paths are:
+
+\begin{terminalplain}
+/ucrt64/bin/g++
+/usr/bin/make
+/usr/bin/git
+\end{terminalplain}
+
+All users should also check that Git is available:
+
+\begin{terminalplain}
 git \mintinline{text}{--version}
 \end{terminalplain}
-If Git is already installed, a version number will be displayed.
 
-If Git is not installed, macOS will normally offer to install the required developer tools automatically.
-
-Follow the prompts and complete the installation.
+You should see a Git version number. The exact version may differ between computers.
 
 \begin{reflectionbox}
 \textbf{Checkpoint}\par
 \medskip
 
-Before continuing, confirm that:
+Before continuing, confirm that Visual Studio Code is running correctly and that Git is available from the terminal.
 
-
-Visual Studio Code starts successfully.
-
-
-Running \mintinline{text}{git --version} displays a version number.
-
-
+Windows users should also confirm that \textbf{CSC2059 Terminal} is the active terminal profile and that the three paths above are reported correctly.
 \end{reflectionbox}
-\subsection{Verify Git is Working}
-Open a terminal.
 
-\subsubsection{Windows}
-> Open a Git Bash terminal inside Visual Studio Code.
-
-\subsubsection{macOS}
-> Open a Terminal inside Visual Studio Code.
-
-Run:
-
-\begin{terminalplain}
-git \mintinline{text}{--version}
-\end{terminalplain}
-You should see something similar to:
-
-\begin{terminalplain}
-git version 2.51.0
-\end{terminalplain}
-Your version number may be different.
-
-That is perfectly fine.
-
-\begin{reflectionbox}
-\textbf{Final Checkpoint}\par
-\medskip
-
-Before moving to the next section, confirm that:
-
-
-Git opens successfully.
-
-
-Running \mintinline{text}{git --version} displays a version number.
-
-
-Visual Studio Code starts correctly.
-
-
-If all three boxes are checked, you are ready to continue.
-
-
-\end{reflectionbox}
-\subsection{Common Problems}
-\begin{commonerror}
-\textbf{"git: command not found"}\par
-\medskip
-
-Git is either not installed or was not added to your system PATH.
-
-
-Reinstall Git and ensure the default installation options are selected.
-
-
-If the problem persists, ask a demonstrator for assistance.
-
-
-\end{commonerror}
-\begin{commonerror}
-\textbf{Visual Studio Code does not open}\par
-\medskip
-
-Reinstall Visual Studio Code and try again.
-
-
-If the problem persists, ask a demonstrator for assistance.
-
-
-\end{commonerror}
-\begin{commonerror}
-\textbf{I Cannot Find Git Bash}\par
-\medskip
-
-Ensure that Git was installed successfully.
-
-
-If Git is installed but Git Bash does not appear in Visual Studio Code, restart Visual Studio Code and repeat Step 3.
-
-
-\end{commonerror}
 \begin{wrapupbox}
-\textbf{Quest Complete}\par
+\textbf{Environment Ready}\par
 \medskip
 
-You now have the tools needed for the rest of this lab.
-
+You now have the development environment needed for this practical.
 
 In the next section, you will configure Git so that your commits are correctly attributed to you.
-
-
-Future-you will be grateful.
-
-
 \end{wrapupbox}
 
 \section{Configuring Git}
 \begin{infobox}
 \textbf{Estimated time: 5-10 minutes}
 \end{infobox}
-Now that Git is installed, we need to tell it who you are.
+Now that the development environment is ready, we need to tell Git who you are.
 
 Every commit created with Git records information about its author. This allows you, your teammates, and your lecturers to see who made a particular change and when it was made.
 
@@ -644,33 +460,25 @@ By the end of this section, you should be able to:
 \end{itemize}
 \end{learningoutcomes}
 \begin{importantnote}
-
 Throughout this module, we recommend using your university email address when configuring Git.
 
-
 This will make it easier for services such as GitHub and Classroom50 to associate your work with your account.
-
-
 \end{importantnote}
 
 Open Visual Studio Code.
 
-
 Open a new terminal:
-
 
 Terminal → New Terminal
 
-\begin{commonerror}
-  \textbf{Open a Git Bash Terminal}\par
-  \medskip
+\begin{importantnote}
+\textbf{Windows Lab Computers}\par
+\medskip
 
-Windows users should ensure that \textbf{Git Bash} is the active terminal profile.
-
-\end{commonerror}
+If the terminal opens as PowerShell, use the terminal profile selector and choose \textbf{CSC2059 Terminal} before entering the commands below.
+\end{importantnote}
 
 You should now be ready to enter Git commands.
-
 
 \subsection{Global Configuration}
 Global settings apply to \textbf{all Git repositories on the current computer}.
@@ -732,10 +540,7 @@ That is perfectly normal.
 \begin{reflectionbox}
 \textbf{Checkpoint}\par
 \medskip
-
 Before continuing, confirm that:
-
-
 \end{reflectionbox}
 \begin{terminalplain}
 git config \mintinline{text}{--list} runs successfully.
@@ -783,16 +588,11 @@ These settings apply only to the current repository.
 \begin{commonerror}
 \textbf{I Ran the Command and Nothing Happened}\par
 \medskip
-
 Good.
-
 
 Many Git commands complete successfully without displaying any output.
 
-
 Run:
-
-
 \begin{terminalplain}
   git config \mintinline{text}{--list}
 \end{terminalplain}
@@ -802,13 +602,9 @@ to verify that the settings were applied.
 \begin{commonerror}
 \textbf{My Name or Email Is Incorrect}\par
 \medskip
-
 Simply run the command again with the correct information.
 
-
 For example:
-
-
 \begin{terminalplain}
   git config \mintinline{text}{--global} user.name "Correct Name"
 \end{terminalplain}
@@ -821,10 +617,7 @@ The old values will be replaced automatically.
 \begin{commonerror}
 \textbf{I Can't Remember My Current Settings}\par
 \medskip
-
 Run:
-
-
 \begin{terminalplain}
   git config \mintinline{text}{--list}
 \end{terminalplain}
@@ -860,9 +653,7 @@ git config user.email "your.email@example.com"
 \begin{importantnote}
 \textbf{Remember This}\par
 \medskip
-
 If Git ever complains that it does not know who you are, or refuses to create a commit because your identity is unknown, return to this section and run:
-
 
 \begin{terminalplain}
   git config \mintinline{text}{--list}
@@ -885,16 +676,11 @@ When in doubt, check your configuration first.
 \begin{wrapupbox}
 \textbf{Quest Complete}\par
 \medskip
-
 Git now knows who you are.
-
 
 This may not sound particularly exciting, but it means that every commit you create from now on will be correctly attributed to you.
 
-
 In the next section, you will create your first Git repository and make your first commit.
-
-
 \end{wrapupbox}
 
 \section{Your First Git Repository}
@@ -986,10 +772,7 @@ The exact path will differ between computers.
 \begin{reflectionbox}
 \textbf{Checkpoint}\par
 \medskip
-
 Before continuing, confirm that the path displayed by pwd ends with:
-
-
 \end{reflectionbox}
 \begin{terminalplain}
 git-survival
@@ -1197,39 +980,27 @@ Think of this as your project's save-game history.
 \begin{reflectionbox}
 \textbf{Checkpoint}\par
 \medskip
-
 Before continuing, confirm that you have:
-
 
 Created a repository.
 
-
 Created a file called hello.txt.
-
 
 Added content to the file.
 
-
 Staged the file.
-
 
 Created a commit.
 
-
 Viewed your commit history.
-
-
 \end{reflectionbox}
 \subsection{Common Problems}
 \begin{commonerror}
 \textbf{"Author identity unknown"}\par
 \medskip
-
 Git does not know who you are.
 
-
 Return to \textbf{Section 2} and verify your configuration using:
-
 
 \begin{terminalplain}
   git config \mintinline{text}{--list}
@@ -1238,31 +1009,23 @@ Return to \textbf{Section 2} and verify your configuration using:
 \begin{commonerror}
 \textbf{I Forgot the -m Option}\par
 \medskip
-
 Git may open an editor and ask you to enter a commit message.
 
-
 If this happens unexpectedly, press:
-
 
 \begin{terminalplain}
   Ctrl+C
 \end{terminalplain}
 to cancel and then try again.
-
 \end{commonerror}
 \begin{commonerror}
 \textbf{"Nothing to Commit"}\par
 \medskip
-
 This is usually good news.
-
 
 It means Git believes everything has already been saved.
 
-
 Run:
-
 
 \begin{terminalplain}
   git status
@@ -1273,36 +1036,19 @@ to check the current state of your repository.
 \begin{wrapupbox}
 \textbf{Quest Complete}\par
 \medskip
-
 You have now:
-
 
 \begin{itemize}
   \item \faCheck\ Created a Git repository.
-\end{itemize}
-
-\begin{itemize}
   \item \faCheck\ Created a file.
-\end{itemize}
-
-\begin{itemize}
   \item \faCheck\ Added content to that file.
-\end{itemize}
-
-\begin{itemize}
   \item \faCheck\ Created your first commit.
-\end{itemize}
-
-\begin{itemize}
   \item \faCheck\ Viewed your commit history.
 \end{itemize}
 
 You now have a complete \textbf{local} version-control workflow.
 
-
 In the next section, you will modify an existing file and see how Git tracks changes over time.
-
-
 \end{wrapupbox}
 
 \section{Tracking Changes}
@@ -1363,13 +1109,9 @@ Save the file.
 \begin{reflectionbox}
 \textbf{Think Before You Type}\par
 \medskip
-
 We have changed a file that Git already knows about.
 
-
 What do you think Git will report?
-
-
 \end{reflectionbox}
 \subsection{Step 3: Check the Repository Status}
 Run:
@@ -1422,16 +1164,11 @@ This is perfectly normal.
 \begin{reflectionbox}
 \textbf{Think Before You Type}\par
 \medskip
-
 What do you think Git will report now?
-
 
 Has it forgotten about the file?
 
-
 Has it accepted the changes?
-
-
 \end{reflectionbox}
 \subsection{Step 6: Check the Status Again}
 Run:
@@ -1525,61 +1262,41 @@ This means all changes have been saved and Git is happy.
 \begin{reflectionbox}
 \textbf{Checkpoint}\par
 \medskip
-
 Before continuing, confirm that you have:
-
 
 Modified hello.txt.
 
-
 Used git status to identify changes.
-
 
 Used git diff to inspect changes.
 
-
 Staged the modified file.
-
 
 Created a second commit.
 
-
 Viewed your commit history.
-
-
 \end{reflectionbox}
 \subsection{Common Problems}
 \begin{commonerror}
 \textbf{I Changed the File but Git Says Nothing Changed}\par
 \medskip
-
 Did you save the file?
-
 
 This question solves an alarming number of computing problems.
 
-
 Save the file and try again.
-
-
 \end{commonerror}
 \begin{commonerror}
 \textbf{git diff Shows Nothing}\par
 \medskip
-
 Did you save the file?
 
-
 If the file has not been saved, Git has nothing to compare.
-
-
 \end{commonerror}
 \begin{commonerror}
 \textbf{I Cannot See Both Commits}\par
 \medskip
-
 Run:
-
 
 \begin{terminalplain}
   git log \mintinline{text}{--oneline}
@@ -1596,9 +1313,7 @@ If you only see one commit, review Steps 5-8 or seek help from a demonstrator.
 \begin{commonerror}
 \textbf{Git Says There Is Nothing to Commit}\par
 \medskip
-
 Run:
-
 
 \begin{terminalplain}
   git status
@@ -1614,23 +1329,12 @@ then your changes have already been committed successfully.
 \begin{wrapupbox}
 \textbf{Quest Complete}\par
 \medskip
-
 You have now:
-
 
 \begin{itemize}
   \item \faCheck\ Modified an existing file.
-\end{itemize}
-
-\begin{itemize}
   \item \faCheck\ Viewed the changes using git diff.
-\end{itemize}
-
-\begin{itemize}
   \item \faCheck\ Created a second commit.
-\end{itemize}
-
-\begin{itemize}
   \item \faCheck\ Extended your repository history.
 \end{itemize}
 
@@ -1656,22 +1360,17 @@ You now understand the basic workflow used in day-to-day software development:
     },
     node distance=8mm
 ]
-
 \node[workflowstep] (edit) {Edit};
 \node[workflowstep, below=of edit] (review) {Review};
 \node[workflowstep, below=of review] (stage) {Stage};
 \node[workflowstep, below=of stage] (commit) {Commit};
-
 \draw[workflowarrow] (edit) -- (review);
 \draw[workflowarrow] (review) -- (stage);
 \draw[workflowarrow] (stage) -- (commit);
-
 \end{tikzpicture}
 \end{figure}
 
 In the next section, you will learn how to perform the same workflow using Visual Studio Code's graphical interface.
-
-
 \end{wrapupbox}
 
 \section{Git Without Typing: Optional Super Powers}
@@ -1777,7 +1476,6 @@ listed as a modified file.
 Notice that both the terminal and the Source Control panel are reporting the same change.
 
 They are simply presenting the information differently.
-
 
 \begin{figure}[htbp]
 \centering
@@ -1895,7 +1593,6 @@ The important thing is that the new commit appears in the history.
   
 \clearpage
 \begin{importantnote}
-
   \textbf{A Note for the Future}\par
   \medskip
   Throughout the remainder of this module, examples will generally use Git commands in the terminal.
@@ -1910,34 +1607,23 @@ The important thing is that the new commit appears in the history.
 \begin{reflectionbox}
 \textbf{Checkpoint}\par
 \medskip
-
 Before continuing, confirm that you have:
-
 
 Opened the Source Control panel.
 
-
 Viewed a modified file.
-
 
 Staged a file using the GUI.
 
-
 Created a commit using the GUI.
 
-
 Verified the commit using \mintinline{text}{git log --oneline}.
-
-
 \end{reflectionbox}
 \subsection{Common Problems}
 \begin{commonerror}
 \textbf{I Cannot See the Source Control Icon}\par
 \medskip
-
 Make sure that:
-
-
 \end{commonerror}
 \begin{itemize}
   \item The git-survival folder is open in VS Code.
@@ -1950,10 +1636,7 @@ git init
 \begin{commonerror}
 \textbf{The Commit Button Is Disabled}\par
 \medskip
-
 Ensure that:
-
-
 \end{commonerror}
 \begin{itemize}
   \item A commit message has been entered.
@@ -1962,10 +1645,7 @@ Ensure that:
 \begin{commonerror}
 \textbf{The File Does Not Appear in Source Control}\par
 \medskip
-
 Run:
-
-
 \end{commonerror}
 \begin{terminalplain}
 git status
@@ -1977,24 +1657,16 @@ This question continues to solve an alarming number of computing problems.
 \begin{wrapupbox}
 \textbf{Quest Complete}\par
 \medskip
-
 You have now used Git through both:
-
 
 \begin{itemize}
   \item \faCheck\ The command line.
-\end{itemize}
-
-\begin{itemize}
   \item \faCheck\ The Visual Studio Code graphical interface.
 \end{itemize}
 
 You now understand that both approaches operate on the same repository and perform the same underlying Git operations.
 
-
 In the next section, you will learn how developers safely experiment with changes using branches.
-
-
 \end{wrapupbox}
 
 \section{Branching and Merging}
@@ -2056,7 +1728,6 @@ You should see something similar to:
   * main
 \end{terminalplain}
 
-
 The asterisk (*) indicates the branch you are currently using.
 
 Most repositories start with a branch called \mintinline{text}{main}.
@@ -2103,7 +1774,6 @@ You should now see:
 The asterisk has moved.
 
 You are now working on \mintinline{text}{feature-message} instead of \mintinline{text}{main}.
-
 
 \subsection{Step 5: Modify the File}
 Open:
@@ -2173,9 +1843,7 @@ Version control saves future headaches.
 The change has disappeared.
 
 \begin{reflectionbox}
-
-  \textbf{What Has Happened?}\par
-
+\textbf{What Has Happened?}\par
 \end{reflectionbox}
 \clearpage
 Your project history now looks something like this:
@@ -2268,42 +1936,29 @@ The branch and the main project now contain the same work.
 \begin{reflectionbox}
 \textbf{Checkpoint}\par
 \medskip
-
 Before continuing, confirm that you have:
-
 
 Created a branch.
 
-
 Switched between branches.
-
 
 Observed different versions of the project.
 
-
 Created a commit on a branch.
-
 
 Successfully merged the branch.
 
-
 Verified the merge using \mintinline{text}{git log --oneline}.
-
-
 \end{reflectionbox}
 \subsection{Common Problems}
 \begin{commonerror}
 \textbf{"fatal: invalid reference"}\par
 \medskip
-
 Check the branch name carefully.
-
 
 Git branch names must match exactly.
 
-
 Run:
-
 
 \begin{terminalplain}
   git branch
@@ -2314,12 +1969,9 @@ to see the available branches.
 \begin{commonerror}
 \textbf{My Changes Have Disappeared}\par
 \medskip
-
 They probably haven't.
 
-
 Run:
-
 
 \begin{terminalplain}
   git branch
@@ -2335,12 +1987,9 @@ Then switch back if necessary:
 \begin{commonerror}
 \textbf{Git Says There Is Nothing to Merge}\par
 \medskip
-
 You may already be on the latest version.
 
-
 Run:
-
 
 \begin{terminalplain}
   git log \mintinline{text}{--oneline}
@@ -2351,35 +2000,20 @@ and compare your commit history.
 \begin{wrapupbox}
 \textbf{Quest Complete}\par
 \medskip
-
 You have now:
-
 
 \begin{itemize}
   \item \faCheck\ Created a branch.
-\end{itemize}
-
-\begin{itemize}
   \item \faCheck\ Worked on an isolated version of a project.
-\end{itemize}
-
-\begin{itemize}
   \item \faCheck\ Switched between branches.
-\end{itemize}
-
-\begin{itemize}
   \item \faCheck\ Merged changes back into the main project.
 \end{itemize}
 
 This is one of the most common workflows used in professional software development.
 
-
 In the next section, we will deliberately create a merge conflict and learn how to resolve it safely.
 
-
 For the first time in this lab, things will \textbf{NOT} go entirely according to plan.
-
-
 \end{wrapupbox}
 
 \section{Resolving Merge Conflicts}
@@ -2445,7 +2079,6 @@ Version control saves future headaches, future tears, and future panic.
 Save the file.
 
 \subsection{Step 3: Commit the Change}
-
 Run:
 
 \begin{terminalplain}
@@ -2499,18 +2132,17 @@ Then:
 git commit -m "Add confusion warning"
 \end{terminalplain}
 \begin{reflectionbox}
-  
-  \textbf{What Has Happened?}\par
-  \medskip
-  At this point:
-  
-  \begin{itemize}
-    \item The main branch contains the word \textbf{confusion}.
-    \item The feature-warning branch contains the word \textbf{panic}.
-  \end{itemize}
-  Both branches changed the same line.
+\textbf{What Has Happened?}\par
+\medskip
+At this point:
+
+\begin{itemize}
+  \item The main branch contains the word \textbf{confusion}.
+  \item The feature-warning branch contains the word \textbf{panic}.
+\end{itemize}
+Both branches changed the same line.
 \end{reflectionbox}
-  
+
 The project history now looks something like this:
 
 \CSCGitConflictDiagram
@@ -2548,16 +2180,11 @@ Automatic merge failed
 \begin{importantnote}
 \textbf{Good!}\par
 \medskip
-
 This is exactly what we wanted.
-
 
 For the first time in this lab, Git has encountered a situation that it cannot resolve automatically.
 
-
 Rather than guessing, Git has stopped and asked for help.
-
-
 \end{importantnote}
 \subsection{Step 8: Open the File}
 Open:
@@ -2607,19 +2234,18 @@ git commit -m "Resolve merge conflict"
 \end{terminalplain}
 The merge is now complete.
 \begin{importantnote}
-  
-  \textbf{Advanced Note}\par
-  \medskip
-  Modern versions of Git also support:
-  
-  \begin{terminalplain}
-    git merge \mintinline{text}{--continue}
-  \end{terminalplain}
-  which completes an in-progress merge after conflicts have been resolved (or moves to the next unresolved conflict).
-  
-  For this lab, we will continue using git commit -m \ldots{} because it follows the workflow you have already learned.
+\textbf{Advanced Note}\par
+\medskip
+Modern versions of Git also support:
+
+\begin{terminalplain}
+  git merge \mintinline{text}{--continue}
+\end{terminalplain}
+which completes an in-progress merge after conflicts have been resolved (or moves to the next unresolved conflict).
+
+For this lab, we will continue using git commit -m \ldots{} because it follows the workflow you have already learned.
 \end{importantnote}
-  
+
 \subsection{Step 12: Verify the Result}
 Run:
 
@@ -2631,63 +2257,48 @@ You should see a new commit similar to \texttt{Resolve merge conflict} near the 
 \CSCGitConflictResolvedDiagram
 
 \begin{reflectionbox}
+\textbf{What Just Happened?}\par
+\medskip
+Let's review:
 
-  
-  \textbf{What Just Happened?}\par
-  \medskip
-  Let's review:
-  
-  \begin{enumerate}
-    \item Two branches modified the same line.
-    \item Git could not determine which version should be kept.
-    \item Git asked you to decide.
-    \item You resolved the conflict manually.
-    \item The merge completed successfully.
-  \end{enumerate}
-  At no point was any work lost.
-  
-  Git simply refused to guess.
+\begin{enumerate}
+  \item Two branches modified the same line.
+  \item Git could not determine which version should be kept.
+  \item Git asked you to decide.
+  \item You resolved the conflict manually.
+  \item The merge completed successfully.
+\end{enumerate}
+At no point was any work lost.
+
+Git simply refused to guess.
 \end{reflectionbox}
 
 \begin{reflectionbox}
 \textbf{Checkpoint}\par
 \medskip
-
 Before continuing, confirm that you have:
-
 
 Created a merge conflict.
 
-
 Opened the conflicted file.
-
 
 Identified the conflict markers.
 
-
 Resolved the conflict manually.
-
 
 Completed the merge.
 
-
 Verified the result using \mintinline{text}{git log --oneline}.
-
-
 \end{reflectionbox}
 \subsection{Common Problems}
 \begin{commonerror}
 \textbf{Git Says "You Have Unmerged Paths"}\par
 \medskip
-
 Good.
-
 
 You are probably in the middle of the exercise.
 
-
 Resolve the conflict in the file first, then run:
-
 
 \begin{terminalplain}
   git add hello.txt
@@ -2698,9 +2309,7 @@ before attempting to commit.
 \begin{commonerror}
 \textbf{The Strange Markers Are Still Visible}\par
 \medskip
-
 Ensure that all of the following lines have been removed:
-
 
 \begin{terminalplain}
   \mintinline{text}{<<<<<<<}
@@ -2716,50 +2325,31 @@ Git cannot complete the merge while these markers remain in the file.
 \begin{commonerror}
 \textbf{I Accidentally Deleted Everything}\par
 \medskip
-
 Do not panic.
-
 
 Git repositories are surprisingly difficult to damage permanently.
 
-
 Ask a demonstrator for assistance.
-
-
 \end{commonerror}
 \begin{wrapupbox}
 \textbf{Quest Complete}\par
 \medskip
-
 You have now:
-
 
 \begin{itemize}
   \item \faCheck\ Created a merge conflict.
-\end{itemize}
-
-\begin{itemize}
   \item \faCheck\ Understood why the conflict occurred.
-\end{itemize}
-
-\begin{itemize}
   \item \faCheck\ Resolved the conflict manually.
-\end{itemize}
-
-\begin{itemize}
   \item \faCheck\ Completed the merge successfully.
 \end{itemize}
 
 Most importantly:
-
 
 \begin{itemize}
   \item \faCheck\ Learned that merge conflicts are a normal part of software development.
 \end{itemize}
 
 In the next section, we will connect Git to GitHub and prepare for using Classroom50 repositories.
-
-
 \end{wrapupbox}
 
 \section{Preparing Your GitHub Account}
@@ -2810,13 +2400,9 @@ If you do not already have a GitHub account, create one now.
 \begin{reflectionbox}
 \textbf{Checkpoint}\par
 \medskip
-
 Before continuing, confirm that:
 
-
 You can successfully sign in to GitHub.
-
-
 \end{reflectionbox}
 \subsection{Step 2: Open Your Account Settings}
 Click your profile picture in the top-right corner of GitHub.
@@ -2847,7 +2433,6 @@ Use your own university email address, not the example above.
 
 Submit the change.
 
-
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.9\textwidth]{../../../assets/figures/practical01/AddGitHubEmail.png}
@@ -2874,59 +2459,45 @@ Verified
 
 or equivalent.
 \begin{importantnote}
-  
-  \textbf{Why Are We Doing This?}\par
-  \medskip
-  Later in this module, you will access repositories through GitHub-based classroom systems.
-  
-  Having a verified university email address associated with your account helps ensure that:
-  
-  \begin{itemize}
-    \item Your account can be identified correctly.
-    \item Repository access can be granted more easily.
-    \item Coursework repositories are associated with the correct student.
-  \end{itemize}
-  Spending a few minutes on this now can save a considerable amount of troubleshooting later.
+\textbf{Why Are We Doing This?}\par
+\medskip
+Later in this module, you will access repositories through GitHub-based classroom systems.
+
+Having a verified university email address associated with your account helps ensure that:
+
+\begin{itemize}
+  \item Your account can be identified correctly.
+  \item Repository access can be granted more easily.
+  \item Coursework repositories are associated with the correct student.
+\end{itemize}
+Spending a few minutes on this now can save a considerable amount of troubleshooting later.
 \end{importantnote}
-  
+
 \begin{reflectionbox}
 \textbf{Checkpoint}\par
 \medskip
-
 Before continuing, confirm that:
-
 
 You can log into GitHub.
 
-
 Your university email address has been added.
 
-
 Your university email address has been verified.
-
-
 \end{reflectionbox}
 \subsection{Common Problems}
 \begin{commonerror}
 \textbf{I Already Have a GitHub Account}\par
 \medskip
-
 Excellent.
-
 
 Use your existing account.
 
-
 Simply add your university email address and verify it.
-
-
 \end{commonerror}
 \begin{commonerror}
 \textbf{I Cannot Find the Verification Email}\par
 \medskip
-
 Check:
-
 
 \begin{itemize}
   \item Your inbox.
@@ -2939,70 +2510,36 @@ If necessary, request that GitHub resend the verification email.
 \begin{commonerror}
 \textbf{I Added the Email but It Still Shows as Unverified}\par
 \medskip
-
 Verification emails occasionally take a few minutes to arrive.
-
 
 Wait a short time and refresh the page.
 
-
 If the problem persists, ask a demonstrator for assistance.
-
-
 \end{commonerror}
 \begin{wrapupbox}
 \textbf{Quest Complete}\par
 \medskip
-
 You have now:
-
 
 \begin{itemize}
   \item \faCheck\ Logged into GitHub.
-\end{itemize}
-
-\begin{itemize}
   \item \faCheck\ Associated your university email address with your account.
-\end{itemize}
-
-\begin{itemize}
   \item \faCheck\ Verified your university email address.
-\end{itemize}
-
-\begin{itemize}
   \item \faCheck\ Prepared your account for use in CSC2059.
 \end{itemize}
 
 You now possess the core Git skills needed for this module:
 
-
 \begin{itemize}
   \item Creating repositories
-\end{itemize}
-
-\begin{itemize}
   \item Tracking changes
-\end{itemize}
-
-\begin{itemize}
   \item Creating commits
-\end{itemize}
-
-\begin{itemize}
   \item Working with branches
-\end{itemize}
-
-\begin{itemize}
   \item Resolving merge conflicts
-\end{itemize}
-
-\begin{itemize}
   \item Using GitHub
 \end{itemize}
 
 In future labs, you will connect these skills to coursework repositories and automated testing workflows.
-
-
 \end{wrapupbox}
 \section{Further Practice (Optional)}
 The activities in this lab are sufficient preparation for CSC2059.
@@ -3053,12 +2590,9 @@ It can be useful as a reference if you would like additional examples or explana
 \begin{importantnote}
 \textbf{A Small Warning}\par
 \medskip
-
 It is easy to fall into the trap of spending hours reading about Git without actually using it.
 
-
 The best way to learn Git is to:
-
 
 \begin{enumerate}
   \item Create repositories.
@@ -3070,10 +2604,7 @@ The best way to learn Git is to:
 
 In other words, \textbf{use Git}.
 
-
 The coursework, laboratory exercises, and programming tasks throughout CSC2059 will provide plenty of opportunities to do exactly that.
-
-
 \end{importantnote}
 \section{Challenge Quest}
 If you would like an extra challenge, try creating a brand-new repository and reproduce the following workflow without referring to this guide:
@@ -3085,7 +2616,6 @@ If you would like an extra challenge, try creating a brand-new repository and re
   {Modify File}
   {Commit}
   {Merge Branch}
-
 
 If you can complete that sequence successfully, you are well on your way to becoming comfortable with Git.
 
@@ -3177,7 +2707,6 @@ These messages clearly describe the change that was made.
 \subsubsection{Examples of Less Helpful Commit Messages}
 
 \begin{quote}
-  
   Stuff
   
   Update
@@ -3236,7 +2765,6 @@ Repositories stored remotely are much harder to lose.
 \subsection{A Habit Worth Developing}
 Many experienced developers follow a simple cycle:
 \begin{center}
-  
   Make a small change
   
   ↓
@@ -3273,7 +2801,7 @@ When you started this lab, Git may have been completely unfamiliar. By this poin
 During this lab, you have learned how to:
 
 \begin{itemize}
-  \item \faCheck\ Configure Git and Visual Studio Code.
+  \item \faCheck\ Configure Git for use in CSC2059.
   \item \faCheck\ Create and manage Git repositories.
   \item \faCheck\ Track changes to files.
   \item \faCheck\ Stage and commit changes.
@@ -3323,6 +2851,5 @@ The goal was to give you the skills needed to work confidently and safely throug
 Mission accomplished.
 
 See you in Lab 2.
-
 
 \end{document}
