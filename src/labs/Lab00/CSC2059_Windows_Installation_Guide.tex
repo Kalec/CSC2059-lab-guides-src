@@ -1,0 +1,239 @@
+\documentclass{csc2059practical}
+
+\setmodulecode{CSC2059}
+\setmoduletitle{Data Structures and Algorithms}
+\setpracticalnumber{1}
+\setpracticaltitle{CSC2059 Development Environment}
+\setpracticalsubtitle{Windows Installation Guide}
+\setpracticaldate{Academic Year 2026--27}
+
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+
+This guide explains how to configure a Windows computer with the development tools used throughout \textbf{CSC2059 Data Structures and Algorithms}.
+
+Follow the steps in this guide \textbf{in the order shown}. The practical exercises assume that this development environment has been configured correctly.
+
+\section{Install Visual Studio Code}
+
+Download Visual Studio Code for Windows from:
+
+\begin{center}
+\url{https://code.visualstudio.com/Download}
+\end{center}
+
+Run the installer and accept the normal installation options.
+
+\section{Install Git for Windows}
+
+Download Git for Windows from:
+
+\begin{center}
+\url{https://git-scm.com/download/win}
+\end{center}
+
+Run the installer. You may accept the default options during installation, with one important exception:
+
+\begin{quote}
+\textbf{When asked to choose Git's default editor, select Visual Studio Code.}
+\end{quote}
+
+This is one reason Visual Studio Code should be installed \emph{before} Git.
+
+Git Bash will also be installed as part of Git for Windows. Although Git Bash may be useful for other purposes, \textbf{do not use Git Bash as the terminal for CSC2059 practical work}. Later in this guide you will configure the terminal used throughout the module.
+
+\section{Install MSYS2}
+
+Download the MSYS2 installer from:
+
+\begin{center}
+\url{https://www.msys2.org/}
+\end{center}
+
+When asked for the installation location, use:
+
+\begin{minted}{text}
+C:\Apps\MSYS64
+\end{minted}
+
+Complete the installation normally.
+
+\section{Update MSYS2}
+
+Open the \textbf{MSYS2 UCRT64} terminal from the Windows Start menu.
+
+At the prompt, enter:
+
+\begin{minted}{bash}
+pacman -Suy
+\end{minted}
+
+Accept the updates when prompted.
+
+During a core-system update, MSYS2 may tell you that all MSYS2 processes, including the current terminal, must be closed. \textbf{This is normal.} Allow the terminal to close.
+
+If this happens, reopen the \textbf{MSYS2 UCRT64} terminal and run:
+
+\begin{minted}{bash}
+pacman -Suy
+\end{minted}
+
+again.
+
+Continue until the update completes without asking you to restart the terminal.
+
+\section{Install the CSC2059 Development Tools}
+
+Make sure that you are using the \textbf{MSYS2 UCRT64} terminal.
+
+Install the GCC C and C++ compilers:
+
+\begin{minted}{bash}
+pacman -S mingw-w64-ucrt-x86_64-gcc
+\end{minted}
+
+Install the GDB debugger:
+
+\begin{minted}{bash}
+pacman -S mingw-w64-ucrt-x86_64-gdb
+\end{minted}
+
+Install Make:
+
+\begin{minted}{bash}
+pacman -S make
+\end{minted}
+
+Finally, install Git within MSYS2:
+
+\begin{minted}{bash}
+pacman -S git
+\end{minted}
+
+Accept the default choices when \texttt{pacman} asks for confirmation.
+
+\section{Configure the Git Prompt}
+
+The Git prompt displays useful information about the current Git repository and branch while you work in the terminal.
+
+Using \textbf{Windows File Explorer}, navigate to:
+
+\begin{minted}{text}
+C:\Program Files\Git\etc\profile.d
+\end{minted}
+
+Copy the file:
+
+\begin{minted}{text}
+git-prompt.sh
+\end{minted}
+
+Now navigate to:
+
+\begin{minted}{text}
+C:\Apps\MSYS64\etc\profile.d
+\end{minted}
+
+and paste \texttt{git-prompt.sh} into this folder.
+
+\section{Create the CSC2059 Terminal in Visual Studio Code}
+
+Open Visual Studio Code.
+
+Open the Command Palette using \texttt{Ctrl+Shift+P} and search for:
+
+\begin{quote}
+\texttt{Preferences: Open User Settings (JSON)}
+\end{quote}
+
+This opens the Visual Studio Code \texttt{settings.json} file.
+
+Add the following terminal profile to the Windows terminal profiles in your settings:
+
+\begin{minted}{json}
+"terminal.integrated.profiles.windows": {
+    "CSC2059 Terminal": {
+        "path": "C:\\Apps\\MSYS64\\usr\\bin\\bash.exe",
+        "args": [
+            "--login",
+            "-i"
+        ],
+        "env": {
+            "CHERE_INVOKING": "1",
+            "MSYSTEM": "UCRT64"
+        }
+    }
+},
+"terminal.integrated.defaultProfile.windows": "CSC2059 Terminal"
+\end{minted}
+
+\textbf{Important:} If your \texttt{settings.json} file already contains a
+\texttt{terminal.integrated.profiles.windows} section, do not create a second one. Add the \texttt{CSC2059 Terminal} entry inside the existing section.
+
+Save the file and restart Visual Studio Code.
+
+\section{Check the Installation}
+
+In Visual Studio Code, select:
+
+\begin{quote}
+\textbf{Terminal $\rightarrow$ New Terminal}
+\end{quote}
+
+The new terminal should be the \textbf{CSC2059 Terminal}.
+
+First, check that the required tools are installed:
+
+\begin{minted}{bash}
+gcc --version
+g++ --version
+gdb --version
+make --version
+git --version
+\end{minted}
+
+Each command should display version information rather than an error.
+
+Next, check that Visual Studio Code is using the correct tools:
+
+\begin{minted}{bash}
+which gcc
+which g++
+which make
+which git
+\end{minted}
+
+A correctly configured CSC2059 environment should report:
+
+\begin{minted}{text}
+/ucrt64/bin/gcc
+/ucrt64/bin/g++
+/usr/bin/make
+/usr/bin/git
+\end{minted}
+
+Finally, check the active MSYS2 environment:
+
+\begin{minted}{bash}
+echo $MSYSTEM
+\end{minted}
+
+This should report:
+
+\begin{minted}{text}
+UCRT64
+\end{minted}
+
+\section{Ready for CSC2059}
+
+Your Windows development environment is now ready for CSC2059.
+
+From this point onwards, when a practical asks you to open a terminal or run a command, use the \textbf{CSC2059 Terminal} in Visual Studio Code.
+
+If the installation checks above do not produce the expected results, ask a member of the teaching team for assistance before continuing with the practical exercises.
+
+\end{document}

@@ -429,7 +429,7 @@ In this first part, you will begin with an insertion function that already works
 
 At first, this may seem like a reasonable approach. However, as you repeat the same implementation for several different types, you should begin to notice an important software engineering problem.
 
-\subsection{A.1 Run the demonstration}
+\subsection{Run the demonstration}
 
 Run the demonstration using:
 
@@ -459,7 +459,7 @@ You should see that inserting an integer value into the array works correctly.
     \end{itemize}
 \end{reflectionbox}
 
-\subsection{A.2 Inspect the existing implementation}
+\subsection{Inspect the existing implementation}
 
 Now open:
 
@@ -488,7 +488,7 @@ Read through the function carefully. Notice that it:
 
 This is the core insertion algorithm.
 
-\subsection{A.3 Implement \texttt{insertDouble()}}
+\subsection{Implement \texttt{insertDouble()}}
 
 The file \texttt{insert.cpp} also contains a placeholder for:
 
@@ -520,7 +520,7 @@ Common mistakes in this task include:
 \end{itemize}
 \end{commonerror}
 
-\subsection{A.4 Optional extension: implement \texttt{insertPerson()}}
+\subsection{Optional extension: implement \texttt{insertPerson()}}
 
 Once \texttt{insertDouble()} works, you may try extending the same idea to a user-defined type.
 
@@ -542,7 +542,7 @@ When you add code that depends on another source file, the compiler needs to kno
 If your test uses the \texttt{Person} class, then the build command must also compile \texttt{src/Person.cpp}. This is why the \texttt{Makefile} needs to be updated for this extension.
 \end{infobox}
 
-\subsection{A.5 Reflect on the duplication}
+\subsection{Reflect on the duplication}
 
 At this point, you may have implemented the same insertion algorithm for more than one type.
 
@@ -592,7 +592,7 @@ If the algorithm is the same, only the type should vary.
 
 C++ allows us to express this idea using a \textbf{function template}.
 
-\subsection{B.1 Run the demonstration}
+\subsection{Run the demonstration}
 
 Open the demonstration file:
 
@@ -610,7 +610,7 @@ At this stage, the demonstration may not behave correctly because the generic in
 
 The purpose of the demonstration is to show the intended direction: one insertion function should eventually work for integers, doubles and strings.
 
-\subsection{B.2 Inspect the generic insertion function}
+\subsection{Inspect the generic insertion function}
 
 Open:
 
@@ -657,7 +657,7 @@ The insertion algorithm itself never cared whether it was inserting integers, do
 The only thing that changed was the type of data being stored.
 \end{tipbox}
 
-\subsection{B.3 Use the tests to guide your implementation}
+\subsection{Use the tests to guide your implementation}
 
 Run the public tests for the generic insertion function:
 
@@ -691,7 +691,7 @@ A common mistake is to change the algorithm while converting it into a template.
 The logic for checking the position, allocating the new array, copying the existing values and updating the pointer should be the same as before. The main difference is that the type is now represented by \mintinline{cpp}{T}.
 \end{commonerror}
 
-\subsection{B.4 Run the demonstration again}
+\subsection{Run the demonstration again}
 
 Once the tests pass, run the demonstration again:
 
@@ -703,7 +703,7 @@ This time, the same insertion function should work with several different data t
 
 You have now replaced several type-specific insertion functions with one reusable generic algorithm.
 
-\subsection{B.5 From duplication to refactoring}
+\subsection{From duplication to refactoring}
 
 The transformation from Part A to Part B is an example of \textbf{refactoring}.
 
@@ -842,7 +842,7 @@ A single implementation of \mintinline{cpp}{SafeArray<T>} should behave correctl
 
 This is another example of abstraction: the behaviour of the container remains the same, while only the element type changes.
 
-\subsection{C.1 Observe the demonstration}
+\subsection{Observe the demonstration}
 
 Run:
 
@@ -865,7 +865,7 @@ Although the container already supports multiple data types, one important opera
 
 Your task is to finish the implementation of the indexing operator.
 
-\subsection{C.2 Generalising an entire container}
+\subsection{Generalising an entire container}
 
 The insertion algorithm from Part B became generic because only the element type changed.
 
@@ -889,7 +889,7 @@ The implementation of the container remains the same.
 
 Only the type represented by \mintinline{cpp}{T} changes.
 
-\subsection{C.3 A short detour: exceptions in C++}
+\subsection{A short detour: exceptions in C++}
 
 Before implementing the indexing operator, it is useful to understand how \mintinline{cpp}{SafeArray} reports errors.
 
@@ -932,7 +932,7 @@ Simply recognise the pattern:
     \item catch it elsewhere if the program can recover.
 \end{itemize}
 
-\subsection{C.4 Implement the indexing operator}
+\subsection{Implement the indexing operator}
 
 Open:
 
@@ -968,7 +968,7 @@ The indexing operator should always validate the supplied index \textbf{before} 
 Returning an element before checking the bounds can lead to undefined behaviour and difficult-to-find bugs.
 \end{commonerror}
 
-\subsection{C.5 Verify your implementation}
+\subsection{Verify your implementation}
 
 Once the tests pass, rerun the demonstration.
 
@@ -988,7 +988,7 @@ Only the type represented by \mintinline{cpp}{T} changes.
 The container itself remains exactly the same.
 \end{tipbox}
 
-\subsection{C.6 Abstraction in Action}
+\subsection{Abstraction in Action}
 
 The pattern from Part B now appears at a higher level of abstraction.
 
@@ -1101,7 +1101,7 @@ In this final part, you will apply exactly the same idea to a complete Abstract 
 
 Rather than creating different stack implementations for different types, you will extend a single generic implementation that already works for many kinds of data.
 
-\subsection{D.1 Observe the demonstration}
+\subsection{Observe the demonstration}
 
 Run the supplied demonstration:
 
@@ -1123,7 +1123,7 @@ However, several useful operations are still missing.
 
 Those are the functions you will implement in this part.
 
-\subsection{D.2 Inspect the Stack interface}
+\subsection{Inspect the Stack interface}
 
 Open:
 
@@ -1145,7 +1145,7 @@ The stack implementation already provides the core ADT operations.
 
 Your task is to extend that implementation with additional behaviour while preserving its existing functionality.
 
-\subsection{D.3 Implement equality}
+\subsection{Implement equality}
 
 Begin with
 
@@ -1167,7 +1167,7 @@ Use the public tests to guide your implementation:
 make test-stack
 \end{terminal}
 
-\subsection{D.4 Implement searching}
+\subsection{Implement searching}
 
 Next implement
 
@@ -1186,7 +1186,7 @@ Return:
 
 Notice that the search algorithm itself does not depend on the stored type.
 
-\subsection{D.5 Implement printing}
+\subsection{Implement printing}
 
 Finally implement
 
@@ -1239,7 +1239,7 @@ For example:
 If those operations are not defined for a particular type, the template cannot use them.
 \end{commonerror}
 
-\subsection{D.6 Verify your implementation}
+\subsection{Verify your implementation}
 
 Run the public tests:
 
@@ -1255,7 +1255,7 @@ make demo04
 
 Confirm that all three operations behave correctly for every supplied data type.
 
-\subsection{D.7 The Abstraction Journey}
+\subsection{The Abstraction Journey}
 
 Throughout this practical, you have progressively generalised larger and larger software components.
 

@@ -148,6 +148,8 @@ The following commands will be used throughout the practical:
 make test01
 make example01
 
+make example02
+
 make test02
 make example03
 
@@ -191,8 +193,8 @@ One common solution is a \textbf{hash table}. Rather than storing books sequenti
         width=\textwidth,
         height=0.4\textheight,
         keepaspectratio
-    ]{../../../assets/figures/practical10/hash_table.png}
-    \caption{Mental model of a hash table, showing how catalogue numbers are mapped to buckets and how collisions are handled using chaining.}
+    ]{../../../assets/figures/practical10/hash_table_new.png}
+    \caption{Mental model of a hash table, showing how catalogue numbers are mapped to buckets and how collisions are handled using probing.}
     \label{fig:hash-table-mental-model}
 \end{figure}
 
@@ -332,7 +334,7 @@ At the moment, however, the output remains unsorted because the Bubble Sort algo
 
 \subsection{Your Tasks}
 
-Open \texttt{Sorting.cpp} and complete the implementation of the \texttt{bubbleSortByTitle()} function and the helper \texttt{comesBefore()} function.
+Open \texttt{Sorting.cpp} and complete the implementation of the \texttt{bubbleSortByTitle()} function and the helper functions \texttt{comesBefore()} and \texttt{swapBooks()}.
 
 As you develop your solution, run the public tests regularly to verify your progress.
 
@@ -380,7 +382,7 @@ One such algorithm is \textbf{Quick Sort}.
         height=0.4\textheight,
         keepaspectratio
     ]{../../../assets/figures/practical10/quick_sort.png}
-    \caption{Mental model of Quick Sort, showing pivot selection, partitioning, and the recursive processing of smaller subproblems.}
+    \caption{Mental model of Quick Sort, showing pivot selection, partitioning, and the recursive processing of smaller subproblems.  Note: the left side of the figure (greyed out) has not been sorted yet}
 
     \label{fig:quick-sort-mental-model}
 
@@ -404,7 +406,7 @@ Open \texttt{Sorting.cpp} and complete the implementation of the following funct
 
 \begin{itemize}
     \item \texttt{partition()}
-    \item \texttt{quickSort()}
+    \item \texttt{quickSortByTitle()}
 \end{itemize}
 
 As before, run the public tests regularly while developing your solution.

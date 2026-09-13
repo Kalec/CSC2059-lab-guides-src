@@ -187,15 +187,16 @@ make demo01
 
 Compare the output with what you expected.
 
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.7\textwidth]{../../../assets/figures/practical03/var_in_memory.png}
+  \caption{Variable in memory}
+  \label{fig:VariableInMemory}
+\end{figure}
+
 \begin{tipbox}
 A useful way to think about this demonstration is that \texttt{x} has two important properties: it stores a value, and it lives somewhere in memory. The expression \texttt{x} gives you the value. The expression \texttt{\&x} gives you the address.
 \end{tipbox}
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.9\textwidth]{../../../assets/figures/practical03/var_in_memory.png}
-\caption{Variable in memory}
-\label{fig:VariableInMemory}
-\end{figure}
 
 \subsection{Demo 02: Direct Assignment}
 
@@ -220,16 +221,17 @@ make demo02
 
 Compare the output with what you expected.
 
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.9\textwidth]{../../../assets/figures/practical03/direct-assignment.png}
+  \caption{Direct Assignment}
+  \label{fig:directAssignment}
+\end{figure}
+
 \begin{tipbox}
 Direct assignment copies a value. After \texttt{int y = x;}, the variables \texttt{x} and \texttt{y} are separate variables. Changing \texttt{y} later does not change \texttt{x}.
 \end{tipbox}
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.9\textwidth]{../../../assets/figures/practical03/direct-assignment.png}
-\caption{Direct Assignment}
-\label{fig:directAssignment}
-\end{figure}
 
 \subsection{Demo 03: Indirect Assignment}
 
@@ -249,21 +251,22 @@ Before running the program, consider:
 Once you have made your prediction, run:
 
 \begin{bashcode}
-make demo03
+  make demo03
 \end{bashcode}
 
 This is the key idea: a pointer provides another route to an existing object.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{../../../assets/figures/practical03/indirect_assignment.png}
+\caption{Indirect Assignment}
+\label{fig:indirectAssignment}
+\end{figure}
 
 \begin{tipbox}
 The pointer \texttt{p} stores the address of \texttt{x}. The expression \texttt{*p} follows that address and accesses the value stored there. Therefore, assigning to \texttt{*p} changes \texttt{x}.
 \end{tipbox}
 
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.9\textwidth]{../../../assets/figures/practical03/indirect_assignment.png}
-\caption{Indirect Assignment}
-\label{fig:indirectAssignment}
-\end{figure}
 
 \subsection{Demo 04: Unsafe Pointer Behaviour}
 
@@ -295,7 +298,7 @@ Unsafe pointer behaviour may crash the program, print unexpected output, or appe
 \begin{commonerror}
 Dereferencing a null pointer causes undefined behaviour. Returning the address of a local variable creates a dangling pointer because the local variable ceases to exist when the function exits.
 \end{commonerror}
-
+\clearpage
 \begin{tipbox}
 If a program involving invalid pointer behaviour appears to work once, that does not make it correct. Undefined behaviour is allowed to look correct, crash, print nonsense, or change behaviour between runs.
 \end{tipbox}
@@ -465,13 +468,12 @@ Your implementation should:
   \item leave \texttt{other} unchanged;
   \item treat \texttt{otherSize == 0} as a valid no-op;
   \item handle an empty first array;
-  \item return \texttt{false} for invalid sizes or invalid pointers;
+  \item return \texttt{false} if either size is negative, or if a pointer is \texttt{nullptr} while its corresponding size is greater than zero. A \texttt{nullptr} with size zero is treated as a valid empty array;
   \item leave the original array and size unchanged if the operation fails.
 \end{itemize}
 
 Run \texttt{make test-add} frequently as you work.
 
-\clearpage
 \begin{commonerror}
 The second array should not be modified. This function appends a copy of its values onto the first array.
 \end{commonerror}
@@ -627,7 +629,7 @@ git add .
 git commit -m "Complete Practical 3 dynamic array functions"
 git push
 \end{bashcode}
-\clearpage
+
 \begin{wrapupbox}
 You have now moved from observing pointer behaviour to implementing dynamic memory operations yourself. This is the groundwork for understanding how many array-backed data structures operate internally. Later in the module, higher-level containers will make some of this work easier, but the ideas you practised here are the machinery underneath.
 \end{wrapupbox}
