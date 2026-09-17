@@ -31,7 +31,7 @@
   flow/.style={-{Latex[length=3mm]}, very thick, draw=CSCBlue!70},
   captionnote/.style={font=\sffamily\small, align=center, text=black!80}
 ]
-\node[stage=CSCBlue] (read) at (90:28mm) {Read\\task};
+\node[stage=CSCBlue] (read) at (90:28mm) {Read task\\and tests};
 \node[stage=CSCGreen] (edit) at (30:28mm) {Edit\\code};
 \node[stage=CSCAmber] (test) at (-30:28mm) {Run\\tests};
 \node[stage=CSCRed] (fix) at (-90:28mm) {Interpret\\errors};
@@ -225,7 +225,7 @@ tests/public\_tests.cpp & Automated public tests run using \texttt{make test}.\\
 
 Welcome to your first C++ programming practical in CSC2059.
 
-In the previous practical, you learned how to use Git, GitHub, and Visual Studio Code to manage your work. In this practical, you will begin writing and testing C++ code using the same development workflow that will be used throughout the module.
+In the previous practical, you practised local Git in Visual Studio Code and prepared your GitHub account. Here you will clone your individual repository and push commits to GitHub for the first time. In this practical, you will begin writing and testing C++ code using the same development workflow that will be used throughout the module.
 
 Rather than creating an entire project from scratch, you will work from a provided code scaffold. This reflects how software development often happens in practice: you are frequently asked to understand, modify, extend, and improve an existing code base rather than starting with an empty folder.
 
@@ -234,7 +234,7 @@ You will learn how C++ programs are organised across multiple files, how functio
 Throughout this practical you should work in small steps:
 
 \begin{itemize}
-  \item read the task;
+  \item read the task and relevant tests, then run the tests before changing code;
   \item make a change;
   \item run the tests;
   \item fix any issues;
@@ -278,11 +278,13 @@ By the end of this practical you should be able to:
 \begin{workflowreminder}
 This workflow will be used throughout the module and will be particularly important when working on future practicals and assessments.
 
-Whenever you are working on a programming task, aim to follow this cycle:
+Read and run the relevant tests before your first change. Then follow this cycle:
 
 \begin{center}
-\textbf{Read the task} $\rightarrow$ \textbf{Make a small change} $\rightarrow$ \textbf{Run the tests} $\rightarrow$ \textbf{Fix problems} $\rightarrow$ \textbf{Commit} $\rightarrow$ \textbf{Push} $\rightarrow$ \textbf{Repeat}
+\textbf{Read task and tests} $\rightarrow$ \textbf{Make a small change} $\rightarrow$ \textbf{Run the tests} $\rightarrow$ \textbf{Fix problems} $\rightarrow$ \textbf{Commit} $\rightarrow$ \textbf{Push} $\rightarrow$ \textbf{Repeat}
 \end{center}
+
+The commands below preview the workflow; cloning and pushing are explained in the next sections. From the repository root, \texttt{git add .} stages additions, modifications and deletions beneath the current folder. Ignored untracked files are excluded. Check \texttt{git status} first, then inspect staged changes before committing. Section~\ref{sec:generated-files} revisits the ignore rules introduced in Practical 1.
 
 Useful commands:
 
@@ -290,6 +292,7 @@ Useful commands:
 git status
 make test
 git add .
+git diff --staged
 git commit -m "Describe what you changed"
 git push
 \end{bashcode}
@@ -322,8 +325,10 @@ CSC2059 Terminal
 
 Do not use PowerShell, Command Prompt, or Git Bash for the command-line activities in this practical.
 
-On your own Windows computer, the CSC2059 Terminal should open automatically if you followed the \textbf{CSC2059 Development Environment: Windows Installation Guide}.
+On your own Windows computer, the CSC2059 Terminal should open automatically if you followed the \textbf{Lab 0: CSC2059 Development Environment (Pre-lab setup)}.
 \end{importantnote}
+
+On macOS and Linux, complete the corresponding Lab 0 setup and use the normal VS Code integrated terminal.
 
 \subsection{Step 1: Access your repository}
 
@@ -331,7 +336,7 @@ Open the link to the Lab Repo provided by your lecturer in Canvas.
 
 If prompted, log in using your GitHub account. The system will automatically create a private repository for you containing the files required for this practical.
 
-Once the repository has been created, open it and locate the \textbf{Code} button. Copy the repository URL.
+Once the repository has been created, open it and locate the \textbf{Code} button. Choose HTTPS and copy the repository URL.
 
 \subsection{Step 2: Clone the repository}
 
@@ -339,24 +344,17 @@ You now need to download a local copy of your repository onto your computer.
 
 \subsubsection{Option A: Using the command line}
 
-Open a terminal and navigate to the folder where you would like to store your practical work. For example:
+Use your file browser to create or choose a folder for your practical work (on I: in the laboratory). Open that folder using \textbf{File $\rightarrow$ Open Folder} in VS Code, then open a terminal. Run \texttt{pwd} to check your current location.
 
+If you want a new subfolder, \texttt{mkdir CSC2059} creates it and \texttt{cd CSC2059} changes into it. Do not run \texttt{mkdir} again if it already exists. Quote paths containing spaces.
+
+Clone the repository, replacing the quoted placeholder below with the HTTPS URL copied from GitHub:
 \begin{bashcode}
-cd Documents
-mkdir CSC2059
-cd CSC2059
+git clone "YOUR_REPOSITORY_URL"
 \end{bashcode}
-
-Clone the repository:
-
+Move into the new folder, replacing this placeholder with the actual folder name reported by the clone command:
 \begin{bashcode}
-git clone <YOUR_REPOSITORY_URL>
-\end{bashcode}
-
-Move into the repository directory.  It should look something similar to:
-
-\begin{bashcode}
-cd practical-02-<your GitHub username>
+cd "YOUR_REPOSITORY_FOLDER"
 \end{bashcode}
 
 Then open Visual Studio Code:
@@ -365,7 +363,7 @@ Then open Visual Studio Code:
 code .
 \end{bashcode}
 
-Visual Studio Code should open on the current folder.
+The dot means the current folder. VS Code should open it; alternatively use File $\rightarrow$ Open Folder.
 
 \subsubsection{Option B: Using Visual Studio Code}
 
@@ -385,6 +383,11 @@ Alternatively, choose \textbf{Clone Repository} from the welcome screen.
 
 Paste your repository URL, choose a suitable folder on your computer, and when prompted select \textbf{Open Repository}. VS Code will open the practical automatically.
 
+
+\begin{importantnote}
+If VS Code requests permission to use its GitHub extension, follow the sign-in prompts and use the GitHub account you registered in Practical 1. Complete any browser sign-in, then return to VS Code. This can happen when cloning or pushing from either the terminal or the GUI.
+\end{importantnote}
+Cloning makes a local copy of the remote GitHub repository and records that remote under the name \texttt{origin}. Your edits and commits remain local until pushed. Run the following commands from the \textbf{repository root}: the top-level folder containing \texttt{Makefile} and \texttt{README.md}, not its parent or the tests subfolder.
 
 \subsection{Step 3: Explore the repository}
 
@@ -427,7 +430,12 @@ make run
 make test
 \end{bashcode}
 
-You do not need to understand every detail of the Makefile yet. For now, think of it as a convenient shortcut that automates common tasks.
+\begin{tabularx}{\linewidth}{@{}l X@{}}
+\texttt{make run} & Builds and runs \texttt{main.cpp} with \texttt{myFunctions.cpp} for manual experiments.\\
+\texttt{make test} & Builds and runs the public tests with the same function implementations.\\
+\end{tabularx}
+
+The Makefile selects the compiler, flags and output paths. You do not need to write its recipes yet. The Windows setup supplies UCRT64 GCC; on macOS, \texttt{g++} may report Apple Clang. If the supplied build requests a missing compiler, ask a demonstrator before changing the Makefile.
 \end{infobox}
 
 \begin{infobox}
@@ -496,7 +504,7 @@ Tests allow us to check whether our functions behave as expected. For example:
 assert(iAdd(2, 3) == 5);
 \end{cppcode}
 
-This asks the computer to verify that the function produces the correct result. If the result is incorrect, the test will fail and provide information that can help us identify the problem.
+This assertion checks the result. A failed assertion may stop the test program immediately, so later checks may not have run. Read the relevant tests before implementing each function; a later failure does not necessarily mean an earlier function is still wrong.
 \end{infobox}
 
 \CSCCompilationModel
@@ -514,7 +522,7 @@ workflows/
 These files are used internally by Classroom50 and GitHub to support features such as automated testing, repository management, and assessment workflows.
 
 \begin{importantnote}
-For the purposes of this practical, you can safely ignore these files.
+For this practical, leave these configuration files unchanged. This is different from adding files to Git's ignore rules.
 
 Unless explicitly instructed otherwise, you should not modify, rename, move, or delete any files that have not been discussed in this practical.
 
@@ -529,6 +537,11 @@ tests/public_tests.cpp
 
 If you are unsure whether a file should be edited, ask a demonstrator before making changes.
 \end{importantnote}
+
+\subsection{Generated files and ignore rules}\label{sec:generated-files}
+Recall \texttt{.gitignore} from Practical 1. Builds can create executables and other generated files which do not belong in a source-code commit. Look for the supplied repository's \texttt{.gitignore} and read its rules alongside the Makefile and README.
+
+After building, run \texttt{git status}. Before using \texttt{git add .}, confirm that the listed changes are your intended source changes. If generated files are listed, or the ignore file is missing, ask a demonstrator to check the supplied rules. Until then, stage only the source files you intentionally changed, for example \texttt{git add myFunctions.cpp}. Do not invent ignore patterns that might hide source files. Always inspect \mintinline{text}{git diff --staged} before committing.
 
 \subsection{A quick observation}
 
@@ -577,7 +590,7 @@ iAdd(2,3) == 5
 Aborted
 \end{terminal}
 
-This is expected. The tests are failing because some functions have not yet been implemented.
+This assertion failure is expected once the test executable has built and started: some functions are placeholders. A compiler error, missing header, missing compiler or failure to launch the executable is a different problem; resolve it before interpreting test results.
 
 \begin{tipbox}
 Think of the tests as a helpful assistant. They tell you what still needs attention.
@@ -631,7 +644,7 @@ Return to the terminal and run:
 make test
 \end{bashcode}
 
-If the tests pass, you have successfully completed that part of the practical. If the tests still fail, read the error message carefully.
+Check that the relevant behaviour now passes and earlier working behaviour still works. Other unfinished functions may still cause failures. Since assertions may stop at the first failure, inspect which check failed before deciding what to change.
 
 Compiler errors and test failures often contain useful information about what went wrong. A later section of this guide lists the most common errors you might encounter during the practical.
 
@@ -641,11 +654,12 @@ Learning how to search for, interpret and resolve programming errors is an impor
 
 \subsection{Commit your progress}
 
-Once you have completed an exercise and verified that the tests pass, commit your work.
+Once the relevant behaviour passes without breaking earlier work, commit your progress; the entire suite need not pass while other functions are unfinished.
 
 \begin{bashcode}
 git status
 git add .
+git diff --staged
 git commit -m "Implemented iAdd"
 \end{bashcode}
 
@@ -681,7 +695,9 @@ Writing objects...
 Done.
 \end{terminal}
 
-As a final check, visit your repository in GitHub and verify that your latest commit is visible online.
+The message Everything up-to-date only means there are no new commits to send; it does not upload unsaved or uncommitted edits. Save, inspect, stage and commit your work before pushing.
+
+On your first push, open your own repository in GitHub and check the latest commit message and author. The author should link to the GitHub account you registered, using the same verified university email configured in Practical 1. If it does not, ask a demonstrator. Repeat the online commit check before leaving.
 
 \begin{importantnote}
 Getting into the habit of pushing regularly is good practice and will be particularly important during practical assessments.
@@ -756,37 +772,18 @@ Check the spelling carefully and make sure the function name exactly matches the
 \end{commonerror}
 
 \begin{commonerror}
-\textbf{Error: undefined symbols for architecture arm64}
+\textbf{Linker error: missing function implementation}
+GCC may report \texttt{undefined reference}; Apple's linker may report \texttt{Undefined symbols for architecture arm64} (or another architecture).
 
-Example:
-
-\begin{terminal}
-Undefined symbols for architecture arm64:
-"divideXbyY(int, int)"
-\end{terminal}
-
-This means that the compiler has found the declaration of the function, but the linker cannot find its implementation.
-
-Check:
-
-\begin{itemize}
-  \item Has the function been implemented?
-  \item Is the function name spelled correctly?
-  \item Do the parameter types match the declaration?
-  \item Did you save the file before compiling?
-\end{itemize}
-
-For example:
-
+For example, the header declares:
 \begin{cppcode}
-int divideXbyY(int x, int y)
+int iAdd(int a, int b);
 \end{cppcode}
-
-is different from:
-
+but this definition provides a different, one-argument function:
 \begin{cppcode}
-double divideXbyY(int x, int y)
+int iAdd(int a) { return a; }
 \end{cppcode}
+A call to the two-argument version still has no implementation. Check the name, parameter types and number of parameters, save the file, and ensure the implementation's source file is included in the build. A return-type conflict with an included declaration is normally a compilation error, not this missing-definition example.
 \end{commonerror}
 
 \begin{commonerror}
@@ -817,7 +814,7 @@ On Windows, first check that you are using the \textbf{CSC2059 Terminal} in Visu
 
 Do not use PowerShell, Command Prompt, or Git Bash for CSC2059 command-line activities.
 
-If you are working on your own Windows computer and have not yet configured the CSC2059 development environment, follow the separate \textbf{CSC2059 Development Environment: Windows Installation Guide}.
+If you are working on your own Windows computer and have not yet configured the CSC2059 development environment, follow the separate \textbf{Lab 0: CSC2059 Development Environment (Pre-lab setup)}.
 
 If this problem occurs on a University laboratory computer while using the CSC2059 Terminal, ask a demonstrator for assistance.
 \end{commonerror}
@@ -919,10 +916,12 @@ make test
 
 The first test should now pass.
 
-Once you are happy with your work, commit your progress:
+Once the relevant check passes, inspect your changes and commit your progress:
 
 \begin{bashcode}
+git status
 git add .
+git diff --staged
 git commit -m "Implement iAdd"
 git push
 \end{bashcode}
@@ -951,7 +950,7 @@ Run:
 make test
 \end{bashcode}
 
-Commit your work once the relevant tests pass.
+Commit once the relevant tests pass and earlier working behaviour still works.
 
 \exercise{Logarithms and Square Roots}{15 minutes}
 
@@ -985,7 +984,7 @@ Run:
 make test
 \end{bashcode}
 
-Commit your work when the tests pass.
+Commit when the relevant tests pass and earlier working behaviour still works.
 
 \exercise{A Simple Calculator Function}{20 minutes}
 
@@ -1032,7 +1031,7 @@ Run:
 make test
 \end{bashcode}
 
-Commit your work when the calculator tests pass.
+Commit when the calculator tests pass and earlier working behaviour still works.
 
 \exercise{Interactive Calculator}{15 minutes}
 
@@ -1263,7 +1262,7 @@ Remember to commit and push your work when finished.
 \section{Wrap-Up}
 
 \begin{wrapupbox}
-By now you have built a small C++ library from scratch, learned the header/source split that every C++ project uses, written your first defensive code, and pushed a submission through the same workflow you will use for the rest of this module.
+By now you have completed a small C++ library from a scaffold, learned how headers and source files work together, written your first defensive code, and pushed a submission through the same workflow you will use for the rest of this module.
 
 Functions, files, and a bit of Git: that is a large part of the toolkit needed to begin building larger and more interesting programs.
 

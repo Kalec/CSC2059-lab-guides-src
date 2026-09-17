@@ -210,7 +210,7 @@
   lab/.style={font=\sffamily\scriptsize, align=center, text=black!75}
 ]
 \node[box] (local) {Local repository\\\footnotesize on your computer};
-\node[box, right=26mm of local] (remote) {Remote repository\\\footnotesize on GitHub/Classroom50};
+\node[box, right=26mm of local] (remote) {Remote repository\\\footnotesize on GitHub};
 \draw[arrow] (local) -- node[above,lab]{\texttt{git push}} (remote);
 \draw[arrow] (remote) to[bend left=18] node[below,lab]{\texttt{git clone} / \texttt{git pull}} (local);
 \end{tikzpicture}
@@ -239,7 +239,7 @@ More importantly, Git can save you from many of the most common student disaster
   \item Losing track of which version is the latest.
   \item Realising after an assessment that your work was never submitted.
 \end{itemize}
-Don't worry if you've never used Git before. By the end of this lab, you will have created repositories, made commits, worked with branches, resolved a merge conflict, and submitted code to an online repository using the same workflow that will be used throughout CSC2059.
+Don't worry if you've never used Git before. By the end of this lab, you will have created repositories, made commits, worked with branches, resolved a merge conflict, and prepared your GitHub account for Practical 2, where you will clone your individual repository and push work online.
 
 \frontsection{Learning Objectives}
 \begin{learningoutcomes}
@@ -249,10 +249,10 @@ By the end of this lab, you should be able to:
   \item Configure Git for personal use on a local machine.
   \item Create and manage a local Git repository.
   \item Stage, commit, and inspect changes using Git.
-  \item Use Git through both the command line and Visual Studio Code.
+  \item Use Git through the command line, with an optional Visual Studio Code GUI activity.
   \item Create, merge, and manage branches.
   \item Resolve a simple merge conflict.
-  \item Clone, modify, commit, and push changes to a remote repository.
+  \item Prepare your GitHub account for cloning and pushing in Practical 2.
   \item Follow a professional software development workflow when working on C++ programs.
 \end{enumerate}
 \end{learningoutcomes}
@@ -302,7 +302,7 @@ You do not need to understand all the internal details of Git to use it successf
 \clearpage
 \frontsection{The CSC2059 Workflow}
 \begin{workflowreminder}
-Throughout this module, we will repeatedly follow the same workflow:
+This is a preview of the module workflow. Today we practise local Git; testing C++ and pushing to GitHub begin in Practical 2:
 
 \CSCModuleWorkflowDiagram
 
@@ -325,7 +325,7 @@ You will:
 \begin{itemize}
   \item Create your own Git repository.
   \item Make changes and commit them.
-  \item Use Git from both the command line and Visual Studio Code.
+  \item Use Git from the command line and optionally the Visual Studio Code GUI.
   \item Create and merge branches.
   \item Resolve a merge conflict.
 \end{itemize}
@@ -348,7 +348,7 @@ The software required for CSC2059 must be installed before you begin the practic
 
 \subsection{Using Your Own Windows Computer}
 
-If you are working on your own Windows laptop or PC, follow the separate \textbf{CSC2059 Development Environment: Windows Installation Guide} before continuing with this practical.
+If you are working on your own Windows laptop or PC, follow the separate \textbf{Lab 0: CSC2059 Development Environment (Pre-lab setup)} before continuing with this practical.
 
 That guide installs and configures Visual Studio Code, Git, MSYS2 and the C++ development tools used throughout CSC2059. It also configures \textbf{CSC2059 Terminal} as the default terminal profile in Visual Studio Code.
 
@@ -362,7 +362,7 @@ should normally open the CSC2059 Terminal automatically.
 
 \subsection{Using a University Laboratory Computer}
 
-The required software is already installed on the School laboratory computers. However, the default Visual Studio Code terminal on the laboratory machines is PowerShell.
+The required software is already installed on the School laboratory computers. However, Visual Studio Code may initially open PowerShell.
 
 For CSC2059 work, Windows users should use the \textbf{CSC2059 Terminal} instead.
 
@@ -391,7 +391,7 @@ Do not use PowerShell, Command Prompt, or Git Bash for the command-line activiti
 
 \subsection{macOS and Linux}
 
-On macOS or Linux, use the integrated terminal in Visual Studio Code. No special CSC2059 terminal profile is required.
+Complete the macOS or Linux setup in Lab 0 before this session. Use the normal integrated terminal in Visual Studio Code; no special CSC2059 terminal profile is required.
 
 \subsection{Verify the Development Environment}
 
@@ -417,13 +417,15 @@ On the School Windows laboratory machines, and on a Windows computer configured 
 /usr/bin/git
 \end{terminalplain}
 
-All users should also check that Git is available:
+All users should also check that Git and the VS Code launcher are available:
 
 \begin{terminalplain}
 git \mintinline{text}{--version}
+
+code \mintinline{text}{--version}
 \end{terminalplain}
 
-You should see a Git version number. The exact version may differ between computers.
+Both commands should print version information. If either is missing, return to Lab 0 or ask a demonstrator before continuing; the editor configuration below requires the code command.
 
 \begin{reflectionbox}
 \textbf{Checkpoint}\par
@@ -459,7 +461,7 @@ Before you start using Git, you should configure your name and email address.
 By the end of this section, you should be able to:
 
 \begin{itemize}
-  \item Configure your Git username.
+  \item Configure your commit author name.
   \item Configure your Git email address.
   \item View your current Git configuration.
   \item Understand the difference between global and repository-specific settings.
@@ -487,7 +489,13 @@ If the terminal opens as PowerShell, use the terminal profile selector and choos
 You should now be ready to enter Git commands.
 
 \subsection{Global Configuration}
-Global settings apply to \textbf{all Git repositories on the current computer}.
+Global settings provide \textbf{your own defaults across repositories}. A repository can override them locally. Your commit author name is a readable name, not your GitHub username. Use the same university email address that you add and verify in GitHub later in this practical.
+
+\begin{importantnote}
+\textbf{Your settings on School computers}
+
+Both the terminal and VS Code Git interface use your personal \mintinline{text}{I:\.gitconfig} file. These Git settings persist across laboratory resets unless you delete that file from the root of your I: drive. Keep it. On your own computer, complete the separate setup in Lab 0; it does not use the laboratory I: drive.
+\end{importantnote}
 
 For most users, this is the simplest option.
 
@@ -525,7 +533,21 @@ Again, Git will normally display no output.
 
 This is normal.
 
-\subsubsection{Step 3: Verify Your Configuration}
+\subsubsection{Step 3: Choose the Commit Editor}
+Run:
+\begin{bashcode}
+git config --global core.editor "code --wait"
+\end{bashcode}
+Git will open VS Code when it needs a message. Save and close that editor tab when finished; Git waits for the tab to close.
+
+\subsubsection{Step 4: Windows Line Endings}
+\textbf{Windows users only} should run:
+\begin{bashcode}
+git config --global core.autocrlf true
+\end{bashcode}
+Windows and Unix systems conventionally use different line endings (CRLF and LF). This setting gives the two Windows Git installations the same conversion policy. macOS and Linux users should skip this step.
+
+\subsubsection{Step 5: Verify Your Configuration}
 Run:
 
 \begin{terminalplain}
@@ -553,12 +575,12 @@ git config \mintinline{text}{--list} runs successfully.
 \end{terminalplain}
 Your name appears in the output.
 
-Your email address appears in the output.
+Your university email address and \mintinline{text}{core.editor=code --wait} appear in the output. On Windows, also check \mintinline{text}{core.autocrlf=true}.
 
-If all three boxes are checked, your global Git configuration is working correctly.
+If these checks pass, your global Git configuration is working correctly.
 
 \subsection{Repository-Specific Configuration}
-Sometimes you may want to configure Git for a single repository rather than for the entire computer.
+Sometimes you may want different defaults for a single repository. The following is an explanation, not a step to perform now: these commands only work inside an existing repository.
 
 This is known as a \textbf{local configuration}.
 
@@ -575,19 +597,8 @@ Notice that the \mintinline{text}{--global} option is missing.
 These settings apply only to the current repository.
 
 \begin{importantnote}
-  \textbf{Why Would I Use This?}
-
-  Most of the time, you will not need to.
-  
-  However, there is one situation where local configuration can be useful.
-  
-  The laboratory machines are periodically reset.
-  
-  This means that global settings may disappear between sessions.
-  
-  If necessary, you can configure a repository individually using the commands above.
-  
-  For now, simply be aware that this option exists.
+\textbf{Why Would I Use This?}
+A separate personal project might need a different email address. Local settings can override your global defaults for that project. They are not needed to survive laboratory resets: your global settings remain on I: unless you delete the configuration file.
 \end{importantnote}
 
 \subsection{Common Problems}
@@ -636,7 +647,7 @@ Display current configuration:
 \begin{terminalplain}
 git config \mintinline{text}{--list}
 \end{terminalplain}
-Set global username:
+Set global commit author name:
 
 \begin{terminalplain}
 git config \mintinline{text}{--global} user.name "Your Name"
@@ -646,7 +657,7 @@ Set global email:
 \begin{terminalplain}
 git config \mintinline{text}{--global} user.email "your.email@example.com"
 \end{terminalplain}
-Set repository-specific username:
+Set repository-specific commit author name:
 
 \begin{terminalplain}
 git config user.name "Your Name"
@@ -674,7 +685,7 @@ If your name or email address is missing, re-run the configuration commands:
 \begin{terminalplain}
   git config \mintinline{text}{--global} user.email "your.email@example.com"
 \end{terminalplain}
-This situation is particularly common on laboratory machines, where settings may be lost after a system reset.
+You may need to configure Git again on a different personal computer, or if you delete your configuration file. Laboratory resets do not delete the settings stored on your I: drive.
 
 When in doubt, check your configuration first.
 \end{importantnote}
@@ -684,7 +695,7 @@ When in doubt, check your configuration first.
 \medskip
 Git now knows who you are.
 
-This may not sound particularly exciting, but it means that every commit you create from now on will be correctly attributed to you.
+These are the defaults for new commits. We will check the recorded name and email address after your first commit.
 
 In the next section, you will create your first Git repository and make your first commit.
 \end{wrapupbox}
@@ -789,7 +800,7 @@ If it does not, now is a good time to ask a demonstrator for assistance before c
 Run:
 
 \begin{terminalplain}
-git init
+git init -b main
 \end{terminalplain}
 You should see a message similar to:
 
@@ -811,11 +822,11 @@ git status
 You should see a message similar to:
 
 \begin{terminalplain}
-nothing to commit, working tree clean
-\end{terminalplain}
-This is one of Git's favourite phrases.
+On branch main
 
-By the end of the semester, it may become one of yours too.
+No commits yet
+\end{terminalplain}
+The option \texttt{-b main} chose the initial branch name. There is no commit history yet.
 
 \begin{reflectionbox}
 \textbf{Think Before You Type}\par
@@ -882,17 +893,28 @@ Hello CSC2059.
 \end{terminalplain}
 Save the file.
 
-\subsection{Step 9: Stage the File}
+\subsection{Step 9: Ignore a Disposable File}
+In VS Code, create and save a file called \texttt{scratch.tmp}. Run \texttt{git status}: it appears as untracked, meaning it has not been added to Git.
+
+Now create a file named exactly \texttt{.gitignore} in the same folder, containing:
+\begin{terminalplain}
+scratch.tmp
+\end{terminalplain}
+Save it and run \texttt{git status} again. The scratch file is omitted, but \texttt{.gitignore} and \texttt{hello.txt} are still untracked.
+
+An ignore rule excludes matching untracked files from normal status and staging. The scratch file still exists on disk. Commit \texttt{.gitignore} so its rules travel with the repository. An ignore rule does not stop Git tracking an already committed file.
+
+\subsection{Step 10: Stage the Files}
 Run:
 
 \begin{terminalplain}
-git add hello.txt
+git add hello.txt .gitignore
 \end{terminalplain}
 The command will normally produce no output.
 
 This is perfectly normal.
 
-\subsection{Step 10: Check Git Again}
+\subsection{Step 11: Check Git Again}
 Before running the next command, make a prediction.
 
 Has Git forgotten about the file?
@@ -911,13 +933,15 @@ You should now see something similar to:
 \begin{terminalplain}
 Changes to be committed:
 
+\hspace{1cm}\textcolor{GitGreen}{new file: .gitignore}
+
 \hspace{1cm}\textcolor{GitGreen}{new file: hello.txt}
 \end{terminalplain}
 Excellent.
 
-Git is now preparing to include the file in the next commit.
+Git is now preparing to include both files in the next commit.
 
-\subsection{Step 11: Create Your First Commit}
+\subsection{Step 12: Create Your First Commit}
 Type the following command exactly as shown. Run:
 
 \begin{terminalplain}
@@ -926,7 +950,7 @@ git commit -m "Add hello message"
 You should see output similar to:
 
 \begin{terminalplain}
-1 file changed
+2 files changed
 \end{terminalplain}
 Congratulations.
 
@@ -934,13 +958,13 @@ You have just created your first commit.
 
 Future-you can now prove that past-you existed.
 
-\subsection{Step 12: Check Git One More Time}
+\subsection{Step 13: Check Git One More Time}
 Run:
 
 \begin{terminalplain}
 git status
 \end{terminalplain}
-You should once again see:
+You should now see:
 
 \begin{terminalplain}
 nothing to commit, working tree clean
@@ -948,17 +972,18 @@ nothing to commit, working tree clean
 This means:
 
 \begin{itemize}
-  \item All changes have been saved.
-  \item Nothing is waiting to be committed.
-  \item Git is happy.
+  \item No tracked changes are staged or unstaged.
+  \item No unignored untracked files are reported.
+  \item The ignored scratch file still exists.
 \end{itemize}
-\subsection{Step 13: View Your Commit History}
+Git sees saved files on disk, not unsaved editor changes. A clean status does not mean a commit has been uploaded. Your first snapshot is local.
+\subsection{Step 14: View Your Commit History}
 Run:
 
 \begin{terminalplain}
 git log
 \end{terminalplain}
-Git will display detailed information about your commit.
+Git will display detailed information about your commit. Check that the Author line contains your own name and university email address. If not, ask a demonstrator before making further commits.
 
 This view contains a lot of information and can feel a little overwhelming at first.
 
@@ -1017,19 +1042,14 @@ Return to \textbf{Section 2} and verify your configuration using:
 \medskip
 Git may open an editor and ask you to enter a commit message.
 
-If this happens unexpectedly, press:
-
-\begin{terminalplain}
-  Ctrl+C
-\end{terminalplain}
-to cancel and then try again.
+Enter a message in the VS Code tab, save it and close that tab. Git waits for it to close. To cancel an ordinary commit, remove all non-comment message text, save and close the tab; Git aborts an empty-message commit. A merge may have a pre-filled message: simply closing it does not cancel the merge commit.
 \end{commonerror}
 \begin{commonerror}
 \textbf{"Nothing to Commit"}\par
 \medskip
 This is usually good news.
 
-It means Git believes everything has already been saved.
+It means no changes are ready for that commit. Save your editor files and inspect the status; ignored files are not included.
 
 Run:
 
@@ -1189,7 +1209,11 @@ Changes to be committed:
 
 \hspace{1cm}\textcolor{GitGreen}{modified: hello.txt}
 \end{terminalplain}
-The changes are now staged and ready to be included in the next commit.
+The changes are now staged and ready to be included in the next commit. Inspect them with:
+\begin{bashcode}
+git diff --staged
+\end{bashcode}
+\texttt{git diff} shows unstaged changes to tracked files; \mintinline{text}{git diff --staged} shows what the next commit will contain. The first command may be empty after staging even though there are changes ready to commit.
 
 \subsection{Step 7: Create a Second Commit}
 Run:
@@ -1263,7 +1287,7 @@ You should once again see
 nothing to commit, working tree clean.
 \end{terminalplain}
 
-This means all changes have been saved and Git is happy.
+This means Git reports no pending tracked changes or unignored untracked files. Save editor changes before checking; the ignored scratch file remains on disk.
 
 \begin{reflectionbox}
 \textbf{Checkpoint}\par
@@ -1297,7 +1321,7 @@ Save the file and try again.
 \medskip
 Did you save the file?
 
-If the file has not been saved, Git has nothing to compare.
+Git only sees the saved version. If you have already staged the changes, use \mintinline{text}{git diff --staged} instead.
 \end{commonerror}
 \begin{commonerror}
 \textbf{I Cannot See Both Commits}\par
@@ -1329,7 +1353,7 @@ If Git reports:
 \begin{terminalplain}
   nothing to commit, working tree clean
 \end{terminalplain}
-then your changes have already been committed successfully.
+then Git sees no pending tracked changes or unignored untracked files. Check that you saved the intended edits; clean status alone does not prove they were committed.
 \end{commonerror}
 
 \begin{wrapupbox}
@@ -1637,7 +1661,7 @@ Make sure that:
   \item You have initialised the repository using:
 \end{itemize}
 \begin{terminalplain}
-git init
+git init -b main
 \end{terminalplain}
 \begin{commonerror}
 \textbf{The Commit Button Is Disabled}\par
@@ -1721,6 +1745,14 @@ Don't worry too much about the details.
 Let's see it in action.
 
 \end{learningoutcomes}
+\subsection*{Before Branching: Both Routes Meet Here}
+If you skipped the optional GUI activity, add \texttt{Version control saves future headaches.} as the third line of \texttt{hello.txt}, save it, and run:
+\begin{bashcode}
+git add hello.txt
+git commit -m "Add version control note"
+\end{bashcode}
+If you already made that GUI commit, do not repeat it. Both routes should now have three commits: \texttt{Add hello message}, \texttt{Add Git description}, and \texttt{Add version control note}. Check with \mintinline{text}{git log --oneline} and confirm \texttt{git status} is clean.
+
 \subsection{Step 1: View Existing Branches}
 Run:
 
@@ -2213,15 +2245,15 @@ Version control saves future headaches, future tears, and future panic.
 \medskip
 The line \mintinline{text}{<<<<<<< HEAD} marks the version currently on \texttt{main}. The line \texttt{=======} separates the two versions. The line \mintinline{text}{>>>>>>> feature-warning} marks the version coming from the \texttt{feature-warning} branch.
 
-These markers were added by Git to identify the conflicting versions. They must be removed before the merge can be completed.
+These markers were added by Git to identify the conflicting versions. Remove them to produce the intended resolved file before staging.
 \end{importantnote}
 
 \subsection{Step 9: Resolve the Conflict}
 Replace the entire conflict block with:
 
-\begin{quote}
-\mintinline{text}{Version control saves future headaches, future tears, future confusion, and future panic.}
-\end{quote}
+\begin{terminal}
+Version control saves future headaches, future tears, future confusion, and future panic.
+\end{terminal}
 Your file should no longer contain the conflict markers \mintinline{text}{<<<<<<<}, \mintinline{text}{=======}, or \mintinline{text}{>>>>>>>}.
 
 Save the file.
@@ -2247,7 +2279,7 @@ Modern versions of Git also support:
 \begin{terminalplain}
   git merge \mintinline{text}{--continue}
 \end{terminalplain}
-which completes an in-progress merge after conflicts have been resolved (or moves to the next unresolved conflict).
+which attempts to complete the current merge after conflicts have been resolved and staged. It reports an error if unresolved paths remain and may open the commit-message editor.
 
 For this lab, we will continue using git commit -m \ldots{} because it follows the workflow you have already learned.
 \end{importantnote}
@@ -2325,7 +2357,7 @@ Ensure that all of the following lines have been removed:
   \mintinline{text}{>>>>>>>}
 \end{terminalplain}
 
-Git cannot complete the merge while these markers remain in the file.
+Git trusts you when you stage a resolved file: it can commit leftover marker text. Remove every marker, save and inspect the file before staging it.
 \end{commonerror}
 
 \begin{commonerror}
@@ -2790,12 +2822,12 @@ Before creating a commit, it is often worth running:
 \begin{terminalplain}
 git status
 \end{terminalplain}
-and, if appropriate:
+and, after staging:
 
 \begin{terminalplain}
-git diff
+git diff \mintinline{text}{--staged}
 \end{terminalplain}
-These commands allow you to confirm exactly what is about to be included in the commit.
+These commands show the repository status and the staged changes proposed for the next commit.
 
 A few seconds spent checking can prevent a lot of confusion later.
 

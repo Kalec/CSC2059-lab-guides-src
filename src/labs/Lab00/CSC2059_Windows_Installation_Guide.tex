@@ -2,9 +2,9 @@
 
 \setmodulecode{CSC2059}
 \setmoduletitle{Data Structures and Algorithms}
-\setpracticalnumber{1}
+\setpracticalnumber{0}
 \setpracticaltitle{CSC2059 Development Environment}
-\setpracticalsubtitle{Windows Installation Guide}
+\setpracticalsubtitle{Pre-lab setup: Windows, macOS and Linux}
 \setpracticaldate{Academic Year 2026--27}
 
 
@@ -14,11 +14,29 @@
 
 \section{Introduction}
 
-This guide explains how to configure a Windows computer with the development tools used throughout \textbf{CSC2059 Data Structures and Algorithms}.
+Complete these checks before your first practical; installation is pre-lab preparation. On School computers, the software is already installed: follow the laboratory route below. On your own computer, follow only the section for your operating system, then complete the final checks.
 
-Follow the steps in this guide \textbf{in the order shown}. The practical exercises assume that this development environment has been configured correctly.
+\begin{infobox}
+\textbf{What each tool does}
+\begin{description}
+\item[VS Code] Edits your files; its integrated terminal runs commands.
+\item[Git] Records versions of your work; GitHub stores pushed commits online.
+\item[C++ compiler] Translates C++ source into a program.
+\item[Make] Runs the build and test instructions supplied in a Makefile.
+\item[Tests] Check whether a program behaves as expected.
+\end{description}
+VS Code is the editor used here; it is a different product from Visual Studio.
+\end{infobox}
 
-\section{Install Visual Studio Code}
+\section{School Windows Computers}
+Open VS Code and choose \textbf{Terminal $\rightarrow$ New Terminal}. Select \textbf{CSC2059 Terminal} from the terminal profile selector if another shell opens. Skip the personal-computer installation sections and go to Section~\ref{sec:checks}.
+
+The terminal and VS Code's Git interface use two Git installations, configured to share your personal \mintinline{text}{I:\.gitconfig} file. Settings saved there persist across laboratory resets unless you delete that file from the root of your I: drive. Practical 1 sets your name, email, editor and Windows line-ending preference. Keep your practical repositories on I: too.
+
+\section{Your Own Windows Computer}
+Follow these Windows steps in order. They install the same tool families as the laboratory environment; your personal computer does not use the laboratory I: drive.
+
+\subsection{Install Visual Studio Code}
 
 Download Visual Studio Code for Windows from:
 
@@ -28,7 +46,7 @@ Download Visual Studio Code for Windows from:
 
 Run the installer and accept the normal installation options.
 
-\section{Install Git for Windows}
+\subsection{Install Git for Windows}
 
 Download Git for Windows from:
 
@@ -46,7 +64,7 @@ This is one reason Visual Studio Code should be installed \emph{before} Git.
 
 Git Bash will also be installed as part of Git for Windows. Although Git Bash may be useful for other purposes, \textbf{do not use Git Bash as the terminal for CSC2059 practical work}. Later in this guide you will configure the terminal used throughout the module.
 
-\section{Install MSYS2}
+\subsection{Install MSYS2}
 
 Download the MSYS2 installer from:
 
@@ -62,7 +80,7 @@ C:\Apps\MSYS64
 
 Complete the installation normally.
 
-\section{Update MSYS2}
+\subsection{Update MSYS2}
 
 Open the \textbf{MSYS2 UCRT64} terminal from the Windows Start menu.
 
@@ -86,7 +104,7 @@ again.
 
 Continue until the update completes without asking you to restart the terminal.
 
-\section{Install the CSC2059 Development Tools}
+\subsection{Install the CSC2059 Development Tools}
 
 Make sure that you are using the \textbf{MSYS2 UCRT64} terminal.
 
@@ -116,7 +134,7 @@ pacman -S git
 
 Accept the default choices when \texttt{pacman} asks for confirmation.
 
-\section{Configure the Git Prompt}
+\subsection{Configure the Git Prompt}
 
 The Git prompt displays useful information about the current Git repository and branch while you work in the terminal.
 
@@ -140,7 +158,7 @@ C:\Apps\MSYS64\etc\profile.d
 
 and paste \texttt{git-prompt.sh} into this folder.
 
-\section{Create the CSC2059 Terminal in Visual Studio Code}
+\subsection{Create the CSC2059 Terminal in Visual Studio Code}
 
 Open Visual Studio Code.
 
@@ -172,68 +190,118 @@ Add the following terminal profile to the Windows terminal profiles in your sett
 \end{minted}
 
 \textbf{Important:} If your \texttt{settings.json} file already contains a
-\texttt{terminal.integrated.profiles.windows} section, do not create a second one. Add the \texttt{CSC2059 Terminal} entry inside the existing section.
+Windows terminal profiles section, do not create a second one. Add the \texttt{CSC2059 Terminal} entry inside the existing section.
 
 Save the file and restart Visual Studio Code.
 
-\section{Check the Installation}
+\subsection{Share Your Personal Git Configuration}
+Git for Windows and MSYS2 Git may otherwise use different home directories. Give both the same global configuration file:
+\begin{enumerate}
+\item In File Explorer's address bar, enter \texttt{\%USERPROFILE\%}. Copy the full folder path it opens (your Windows profile, not your GitHub username).
+\item In Windows, search for \textbf{Edit environment variables for your account}. Add a \emph{user} variable. Its name is:
+\begin{terminal}
+GIT_CONFIG_GLOBAL
+\end{terminal}
+\item Set its value to that full path followed by \texttt{\textbackslash{}.gitconfig}, for example:
+\begin{terminal}
+C:\Users\Jane\.gitconfig
+\end{terminal}
+Use your actual path, without surrounding quotation marks. Keep any existing configuration file; do not replace its contents.
+\item Close all VS Code and MSYS2 windows, then reopen them so they inherit the variable.
+\end{enumerate}
+Practical 1 will save your personal settings into this shared file. This is a one-time personal-Windows setup; the School image already supplies its own configuration location.
 
-In Visual Studio Code, select:
+\subsection{Make the VS Code Launcher Available}
+In the CSC2059 Terminal, run \texttt{code --version}. If it prints a version, skip this subsection. Otherwise, for a standard VS Code installation, copy this entire block into that terminal once:
+\begin{bashcode}
+cat >> ~/.bash_profile <<'EOF'
 
-\begin{quote}
-\textbf{Terminal $\rightarrow$ New Terminal}
-\end{quote}
+# CSC2059: add only the VS Code launcher directory.
+for csc2059_code_bin in "/c/Program Files/Microsoft VS Code/bin" \
+  "$(cygpath -u "$LOCALAPPDATA")/Programs/Microsoft VS Code/bin"
+do
+    if [ -f "$csc2059_code_bin/code" ]; then
+        export PATH="$PATH:$csc2059_code_bin"
+        break
+    fi
+done
+unset csc2059_code_bin
+EOF
+\end{bashcode}
+This adds a startup setting for the two usual VS Code installation locations. Close and reopen the terminal, then retry \texttt{code --version}. A custom installation location needs its own launcher path; ask for help if the check still fails. Do not import the entire Windows PATH to fix this one command.
 
-The new terminal should be the \textbf{CSC2059 Terminal}.
+\section{Your Own macOS Computer}
+Install \href{https://code.visualstudio.com/docs/setup/mac}{Visual Studio Code for macOS}. Open the macOS Terminal and run:
+\begin{bashcode}
+xcode-select --install
+\end{bashcode}
+Follow the installer for Apple's Command Line Tools, which supply the compiler, Git and Make. If the tools are already installed, proceed to the checks below.
 
-First, check that the required tools are installed:
+In VS Code, open the Command Palette (\texttt{Cmd+Shift+P}) and run \textbf{Shell Command: Install 'code' command in PATH}. Restart the terminal afterwards. Use VS Code's normal integrated terminal; do not install MSYS2 or the Windows CSC2059 terminal profile.
 
-\begin{minted}{bash}
-gcc --version
-g++ --version
-gdb --version
-make --version
+Apple's \texttt{g++} command can report \textbf{Apple Clang}. This is expected on this platform.
+
+\section{Your Own Linux Computer}
+Install VS Code using the \href{https://code.visualstudio.com/docs/setup/linux}{official Linux instructions} for your distribution. On \textbf{Ubuntu or Debian}, install the remaining tools with:
+\begin{bashcode}
+sudo apt update
+sudo apt install build-essential git
+\end{bashcode}
+Other distributions need their equivalent C++ compiler, Make and Git packages. Use VS Code's normal integrated terminal; no MSYS2 installation or Windows terminal profile is needed.
+
+\section{Check Your Setup}\label{sec:checks}
+On every platform, open VS Code's integrated terminal and run:
+\begin{bashcode}
 git --version
-\end{minted}
+g++ --version
+make --version
+code --version
+\end{bashcode}
+Each command should print version information, not a command-not-found error. Exact versions can differ between computers.
 
-Each command should display version information rather than an error.
-
-Next, check that Visual Studio Code is using the correct tools:
-
-\begin{minted}{bash}
-which gcc
+\textbf{Windows only:} select CSC2059 Terminal and also run:
+\begin{bashcode}
 which g++
 which make
 which git
-\end{minted}
-
-A correctly configured CSC2059 environment should report:
-
-\begin{minted}{text}
-/ucrt64/bin/gcc
+echo $MSYSTEM
+\end{bashcode}
+The expected results, in order, are:
+\begin{terminal}
 /ucrt64/bin/g++
 /usr/bin/make
 /usr/bin/git
-\end{minted}
-
-Finally, check the active MSYS2 environment:
-
-\begin{minted}{bash}
-echo $MSYSTEM
-\end{minted}
-
-This should report:
-
-\begin{minted}{text}
 UCRT64
-\end{minted}
+\end{terminal}
+These paths do not apply to macOS or Linux. On Windows, \texttt{gdb --version} also checks the debugger installed above; debugging is not required for the first Git exercise.
 
-\section{Ready for CSC2059}
+\subsection{Editor Assistance}
+In VS Code's Extensions view, install or check that \textbf{C/C++} by Microsoft is available. It provides code assistance, not the compiler itself. If prompted to select a compiler, use the compiler installed above (UCRT64 \texttt{g++.exe} on Windows, Apple's compiler on macOS, or your distribution's compiler on Linux).
 
-Your Windows development environment is now ready for CSC2059.
+\subsection{A Small Compile-and-Run Check}
+Create a separate folder called \texttt{setup-check} using your file browser and open it with \textbf{File $\rightarrow$ Open Folder}. Create and save \texttt{setup-check.cpp} containing:
+\begin{cppcode}
+#include <iostream>
+int main()
+{
+    std::cout << "CSC2059 setup works!\n";
+}
+\end{cppcode}
+No prior C++ knowledge is needed for this check. Open a new terminal in this folder and compile it:
+\begin{bashcode}
+g++ setup-check.cpp -o setup-check
+\end{bashcode}
+On Windows, run:
+\begin{bashcode}
+./setup-check.exe
+\end{bashcode}
+On macOS or Linux, run:
+\begin{bashcode}
+./setup-check
+\end{bashcode}
+You should see \texttt{CSC2059 setup works!}. This simple command checks installation; later practicals use their supplied Makefiles and build options.
 
-From this point onwards, when a practical asks you to open a terminal or run a command, use the \textbf{CSC2059 Terminal} in Visual Studio Code.
-
-If the installation checks above do not produce the expected results, ask a member of the teaching team for assistance before continuing with the practical exercises.
+\section{Ready for Practical 1}
+You are ready when the tool checks and small program work. Use CSC2059 Terminal on Windows and the normal VS Code integrated terminal on macOS or Linux. If a check fails, ask the teaching team for help before starting the practical. Practical 1 will configure your Git identity and editor.
 
 \end{document}
