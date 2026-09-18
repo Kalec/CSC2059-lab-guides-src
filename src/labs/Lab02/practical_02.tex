@@ -76,10 +76,9 @@
 .2 myFunctions.cpp.
 .2 main.cpp.
 .2 tests/.
-.3 public\_tests.cpp.
-.2 .github/.
-.3 workflows/.
-.2 .classroom/.
+.3 test\_functions.cpp.
+.2 .gitignore.
+.2 bin/ (generated).
 }}
 \medskip
 \begin{tabularx}{\linewidth}{@{}>{\ttfamily\small}l X@{}}
@@ -88,8 +87,9 @@ Makefile & Shortcuts for compiling, running, and testing the project.\\
 myFunctions.h & Function declarations: what functions exist and what they return.\\
 myFunctions.cpp & Function implementations: the code you will mostly edit.\\
 main.cpp & Small program used for manual experiments and interaction.\\
-tests/public\_tests.cpp & Automated public tests run using \texttt{make test}.\\
-.github/, .classroom/ & Classroom50/GitHub configuration. Do not modify unless instructed.\\
+tests/test\_functions.cpp & Automated public tests run using \texttt{make test}.\\
+.gitignore & Rules excluding generated files from Git.\\
+bin/ & Generated executables; created by Make and ignored by Git.\\
 \end{tabularx}
 \end{tcolorbox}
 \caption{The main files and folders in the Practical 2 repository.}
@@ -187,7 +187,7 @@ tests/public\_tests.cpp & Automated public tests run using \texttt{make test}.\\
 
 \node[sourceblue] (header) at (-48mm,0) {\texttt{myFunctions.h}\\\footnotesize function declarations};
 \node[sourcegreen] (library) at (0,0) {\texttt{myFunctions.cpp}\\\footnotesize function implementations};
-\node[sourcepurple] (tests) at (48mm,0) {\texttt{tests/public\_tests.cpp}\\\footnotesize automated checks};
+\node[sourcepurple] (tests) at (48mm,0) {\texttt{tests/test\_functions.cpp}\\\footnotesize automated checks};
 
 \node[process] (make) at (0,-24mm) {\texttt{make test}\\\footnotesize asks the Makefile to build the tests};
 \node[process] (compile) at (0,-48mm) {compile source files\\\footnotesize translate your library and test code};
@@ -325,7 +325,7 @@ CSC2059 Terminal
 
 Do not use PowerShell, Command Prompt, or Git Bash for the command-line activities in this practical.
 
-On your own Windows computer, the CSC2059 Terminal should open automatically if you followed the \textbf{Lab 0: CSC2059 Development Environment (Pre-lab setup)}.
+On your own Windows computer, use the terminal profile configured in \textbf{Lab 0}.
 \end{importantnote}
 
 On macOS and Linux, complete the corresponding Lab 0 setup and use the normal VS Code integrated terminal.
@@ -399,7 +399,7 @@ Makefile
 myFunctions.h
 myFunctions.cpp
 main.cpp
-tests/public_tests.cpp
+tests/test_functions.cpp
 \end{terminal}
 
 Take a moment to inspect these files. You do not need to understand everything immediately. For now, simply note that each file has a specific purpose.
@@ -431,11 +431,14 @@ make test
 \end{bashcode}
 
 \begin{tabularx}{\linewidth}{@{}l X@{}}
+\texttt{make build} & Builds both programs without running them; this is also the default for bare \texttt{make}.\\
 \texttt{make run} & Builds and runs \texttt{main.cpp} with \texttt{myFunctions.cpp} for manual experiments.\\
-\texttt{make test} & Builds and runs the public tests with the same function implementations.\\
+\texttt{make test} & Builds and runs the public tests with the same function implementations, stopping at the first failed assertion.\\
+\texttt{make clean} & Removes the generated \texttt{bin/} folder; source files remain.\\
+\texttt{make help} & Lists the available commands.\\
 \end{tabularx}
 
-The Makefile selects the compiler, flags and output paths. You do not need to write its recipes yet. The Windows setup supplies UCRT64 GCC; on macOS, \texttt{g++} may report Apple Clang. If the supplied build requests a missing compiler, ask a demonstrator before changing the Makefile.
+The Makefile uses C++17 and warning flags, and places compiled programs in \texttt{bin/}: \texttt{main} and \texttt{test\_functions}, with \texttt{.exe} added on Windows. The folder is created automatically. \texttt{make run-main} and \texttt{make test-functions} name the individual program and test group; \texttt{make run} and \texttt{make test} run all required groups (one each here). Saved source or header edits trigger a rebuild when needed. You do not need to write recipes or run \texttt{make clean} after ordinary edits. The Windows setup supplies UCRT64 GCC; on macOS, \texttt{g++} may report Apple Clang. If the supplied build requests a missing compiler, ask a demonstrator before changing the Makefile.
 \end{infobox}
 
 \begin{infobox}
@@ -479,7 +482,7 @@ The implementation contains the actual instructions that will be executed when t
 As you work through this practical, most of your coding will take place in this file.
 \end{infobox}
 
-\begin{infobox}
+\begin{csccalloutbase}[unbreakable]{black!65}{CSCGray}{General Information}{\cscIconInfo}
 \textbf{\texttt{main.cpp}}
 
 This file contains a small C++ program that demonstrates how the functions in \texttt{myFunctions} can be used.
@@ -491,10 +494,10 @@ You can compile and run this program using:
 \begin{bashcode}
 make run
 \end{bashcode}
-\end{infobox}
+\end{csccalloutbase}
 
 \begin{infobox}
-\textbf{\texttt{tests/public\_tests.cpp}}
+\textbf{\texttt{tests/test\_functions.cpp}}
 
 This file contains the automated tests used throughout the practical.
 
@@ -504,7 +507,7 @@ Tests allow us to check whether our functions behave as expected. For example:
 assert(iAdd(2, 3) == 5);
 \end{cppcode}
 
-This assertion checks the result. A failed assertion may stop the test program immediately, so later checks may not have run. Read the relevant tests before implementing each function; a later failure does not necessarily mean an earlier function is still wrong.
+This assertion checks the result. A failed assertion stops the test program immediately, so later checks have not run. The file contains checks for addition, division, logarithms, square roots and the calculator. Read them to see the full set of required behaviours. Read the relevant tests before implementing each function; a later failure does not necessarily mean an earlier function is still wrong. Practical 3 introduces Catch2 and a switch for running all test cases; this practical keeps the simpler assertion workflow. The supplied test harness also rejects a function that ends the program instead of returning to its caller.
 \end{infobox}
 
 \CSCCompilationModel
@@ -514,9 +517,8 @@ This assertion checks the result. A failed assertion may stop the test program i
 Depending on the Classroom50 configuration, you may notice additional files or folders in your repository. Examples might include:
 
 \begin{terminal}
-.github/
-.classroom/
-workflows/
+.github/workflows/
+.classroom50.yaml
 \end{terminal}
 
 These files are used internally by Classroom50 and GitHub to support features such as automated testing, repository management, and assessment workflows.
@@ -532,14 +534,14 @@ The files you will primarily work with are:
 myFunctions.h
 myFunctions.cpp
 main.cpp
-tests/public_tests.cpp
+tests/test_functions.cpp
 \end{terminal}
 
 If you are unsure whether a file should be edited, ask a demonstrator before making changes.
 \end{importantnote}
 
 \subsection{Generated files and ignore rules}\label{sec:generated-files}
-Recall \texttt{.gitignore} from Practical 1. Builds can create executables and other generated files which do not belong in a source-code commit. Look for the supplied repository's \texttt{.gitignore} and read its rules alongside the Makefile and README.
+Recall \texttt{.gitignore} from Practical 1. Compiled programs are placed in the repository's \texttt{bin/} folder, which the supplied ignore rules exclude from Git. This is a folder inside this practical, not the operating system's \texttt{/bin}. Builds create generated files which do not belong in a source-code commit. Look for the supplied repository's \texttt{.gitignore} and read its rules alongside the Makefile and README.
 
 After building, run \texttt{git status}. Before using \texttt{git add .}, confirm that the listed changes are your intended source changes. If generated files are listed, or the ignore file is missing, ask a demonstrator to check the supplied rules. Until then, stage only the source files you intentionally changed, for example \texttt{git add myFunctions.cpp}. Do not invent ignore patterns that might hide source files. Always inspect \mintinline{text}{git diff --staged} before committing.
 
@@ -644,7 +646,7 @@ Return to the terminal and run:
 make test
 \end{bashcode}
 
-Check that the relevant behaviour now passes and earlier working behaviour still works. Other unfinished functions may still cause failures. Since assertions may stop at the first failure, inspect which check failed before deciding what to change.
+Check that the relevant behaviour now passes and earlier working behaviour still works. Other unfinished functions may still cause failures. Since assertions stop at the first failure, inspect which check failed before deciding what to change.
 
 Compiler errors and test failures often contain useful information about what went wrong. A later section of this guide lists the most common errors you might encounter during the practical.
 
@@ -916,6 +918,7 @@ make test
 
 The first test should now pass.
 
+\Needspace{48mm}
 Once the relevant check passes, inspect your changes and commit your progress:
 
 \begin{bashcode}
@@ -1023,7 +1026,7 @@ Your function should support:
 /
 \end{terminal}
 
-Remember to handle division by zero defensively. If the operator is not recognised, return \texttt{0.0}.
+Remember to handle division by zero defensively. If the operator is not recognised, return \texttt{0.0}. Return that value to the caller; do not terminate the program with \texttt{exit}. The tests check an unsupported operator as well as the four supported ones.
 
 Run:
 
@@ -1131,6 +1134,7 @@ sortPrint(2, 3, 1);
 sortPrint(5, 5, 2);
 \end{cppcode}
 
+\Needspace{70mm}
 As an extension, modify the main program so that it asks the user to input three numbers to order. For example:
 
 \begin{cppcode}
@@ -1196,6 +1200,7 @@ Remember that integer division truncates decimals. What happens if \texttt{sum} 
 Remember to commit your work.
 \end{challengebox}
 
+\Needspace{65mm}
 \begin{challengebox}
 \textbf{Challenge B: Guessing Game}
 

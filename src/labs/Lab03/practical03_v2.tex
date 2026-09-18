@@ -55,7 +55,7 @@ After that, you will use the public tests to guide your implementation of severa
 The techniques developed here underpin many of the data structures studied later in CSC2059, including array-backed lists, stacks, queues, and vectors. The aim is to move from \textbf{understanding memory behaviour} to \textbf{controlling memory behaviour}, and then to packaging that behaviour into reusable code.
 
 \begin{infobox}
-\textbf{Estimated time:} 90 minutes minimum.
+\textbf{Estimated time:} approximately two hours, including reading, testing and reflection.
 
 Some students will complete the core tasks more quickly, while others will need more time with the pointer and memory-management details. That is normal. Work steadily, run the tests often, and avoid making large untested changes.
 \end{infobox}
@@ -74,16 +74,16 @@ You should complete the Canvas self-assessment before beginning the implementati
 
 The repository link for this practical will be provided on Canvas. 
 
-Use the Canvas link to accept the Practical 3 assignment in Classroom50. Once your repository has been created, clone it to a suitable location on your machine.
+Use the Canvas link to accept the Practical 3 assignment in Classroom50. Follow the clone and GitHub sign-in steps from Practical 2, using your registered account and a suitable work folder (on I: in the laboratory). Replace both quoted placeholders below with your actual repository URL and folder name.
 
 \begin{bashcode}
-git clone <your-practical-3-repository-url>
-cd <your-practical-3-repository-name>
+git clone "YOUR_REPOSITORY_URL"
+cd "YOUR_REPOSITORY_FOLDER"
 code .
 \end{bashcode}
 
 \begin{importantnote}
-Use VS Code and the supplied Makefile workflow for this practical. Do not create a Visual Studio solution or project.
+Open the repository root in VS Code. On Windows select the \textbf{CSC2059 Terminal}; on macOS/Linux use the integrated terminal configured in Lab 0. Use the supplied Makefile commands, as in Practical 2.
 \end{importantnote}
 
 \begin{commonerror}
@@ -92,7 +92,7 @@ If a command such as \texttt{make test-search} fails with a message similar to \
 
 \frontsection{Repository Tour}
 
-Before editing any code, take a moment to look around the repository. The layout is deliberately similar to the practicals you have already seen.
+Before editing, look around the repository. Practical 2 kept its header and implementation at the root. This practical groups declarations in \texttt{include/}, implementations in \texttt{src/}, and demonstration programs in \texttt{examples/}. Tests remain in \texttt{tests/}; \texttt{external/} contains the supplied testing library.
 
 \begin{terminal}
 external/
@@ -113,7 +113,7 @@ src/
 tests/
     test_search.cpp
     test_resize.cpp
-    test_add_arrays.cpp
+    test_add.cpp
     test_insert.cpp
 
 Makefile
@@ -144,6 +144,27 @@ include/DynamicArrayUtils.h
 \end{terminal}
 
 You should read the header file carefully. The comments above each function describe the intended behaviour and will also appear as hints in VS Code.
+
+\frontsection{Build and Test Commands}
+
+Run these commands from the repository root. As in Practical 2, Make builds changed source/header files when needed and puts executables in the ignored \texttt{bin/} folder. On Windows the executable names end in \texttt{.exe}; the Make commands are identical on all three platforms.
+
+\begin{tabularx}{\linewidth}{@{}l X@{}}
+\texttt{make} or \texttt{make build} & Build all demos and tests without running them.\\
+\texttt{make run} & Build and run all four demonstrations.\\
+\texttt{make run-demo01} & Run Demo 01; use \texttt{02}, \texttt{03} or \texttt{04} for the others.\\
+\texttt{make test} & Run the core test groups in order; stop at the first failure.\\
+\texttt{make test TEST\_MODE=all} & Run all groups for an overview of remaining work.\\
+\texttt{make clean} & Remove generated files from \texttt{bin/}; keep your source files.\\
+\texttt{make help} & Display the available commands.\\
+\end{tabularx}
+
+There are four core test groups: \texttt{test-search}, \texttt{test-resize}, \texttt{test-add} and \texttt{test-insert}. Use a group while implementing its function, then check the others for regressions. For example:
+\begin{bashcode}
+make test-add
+make test-add TEST_MODE=all
+\end{bashcode}
+The default is \texttt{TEST\_MODE=first}. A setting applies only to the command where you write it. The all mode continues to later test cases and groups after ordinary failures, but still reports failure if any group fails. A compiler error is a build problem; a crash can prevent an executable from completing all its cases. You do not need \texttt{make clean} after ordinary source edits.
 
 \section{Part A - Fundamentals}
 
@@ -182,7 +203,7 @@ Before running the program, consider:
 Once you have made your prediction, run:
 
 \begin{bashcode}
-make demo01
+make run-demo01
 \end{bashcode}
 
 Compare the output with what you expected.
@@ -216,7 +237,7 @@ Before running the program, consider:
 Once you have made your prediction, run:
 
 \begin{bashcode}
-make demo02
+make run-demo02
 \end{bashcode}
 
 Compare the output with what you expected.
@@ -233,6 +254,7 @@ Compare the output with what you expected.
 Direct assignment copies a value. After \texttt{int y = x;}, the variables \texttt{x} and \texttt{y} are separate variables. Changing \texttt{y} later does not change \texttt{x}.
 \end{tipbox}
 
+\Needspace{70mm}
 \subsection{Demo 03: Indirect Assignment}
 
 Examine the source code in:
@@ -251,7 +273,7 @@ Before running the program, consider:
 Once you have made your prediction, run:
 
 \begin{bashcode}
-  make demo03
+  make run-demo03
 \end{bashcode}
 
 This is the key idea: a pointer provides another route to an existing object.
@@ -268,6 +290,7 @@ The pointer \texttt{p} stores the address of \texttt{x}. The expression \texttt{
 \end{tipbox}
 
 
+\Needspace{70mm}
 \subsection{Demo 04: Unsafe Pointer Behaviour}
 
 Examine the source code in:
@@ -286,13 +309,13 @@ Before running the program, consider:
 Once you have made your prediction, run:
 
 \begin{bashcode}
-make demo04
+make run-demo04
 \end{bashcode}
 
-The file contains two lines of commented-out code. These lines are unsafe on purpose. To see why, uncomment one unsafe line at a time, run \texttt{make demo04}, observe what happens, and then comment the line out again before moving on.
+The file contains two lines of commented-out code. These lines are unsafe on purpose. To see why, uncomment one unsafe line at a time, run \texttt{make run-demo04}, observe what happens, and then comment the line out again before moving on.
 
 \begin{importantnote}
-Unsafe pointer behaviour may crash the program, print unexpected output, or appear to work. If the program crashes, that is part of the lesson. Restore the comments before continuing with the rest of the practical.
+The compiler may warn that \texttt{unsafeCube} returns the address of a local variable. That warning is intentional here. Unsafe pointer behaviour may crash the program, print unexpected output, or appear to work. If the program crashes, that is part of the lesson. Restore the comments before continuing with the rest of the practical.
 \end{importantnote}
 
 \begin{commonerror}
@@ -320,11 +343,29 @@ In this section, you will:
 \end{itemize}
 \end{learningoutcomes}
 
-\begin{workflowreminder}
-For each implementation task, begin by running the relevant test target. Read the failing test names, make a small change, and run the tests again.
+\subsection{From Assertions to Catch2}
 
-A failing test is not a disaster. It is information.
-\end{workflowreminder}
+Practical 2 used \texttt{assert}, which stops the program at its first failed check. Here, the supplied \texttt{external/catch.hpp} provides \textbf{Catch2 2.13.10}, a test framework that organises checks into named cases and reports failures. It is already in the repository; do not install another copy.
+
+The first case in \texttt{tests/test\_search.cpp} follows this pattern:
+\begin{cppcode}
+TEST_CASE("search counts one occurrence within the specified size")
+{
+    char array[] = {'a', 'b', 'c', 'd', 'c'};
+    int count = search(array, 4, 'c');
+    REQUIRE(count == 1);
+}
+\end{cppcode}
+\texttt{TEST\_CASE} names a behaviour. \texttt{REQUIRE} checks a condition; if it fails, the remainder of that case is skipped. With the default first-failure mode, the run also stops. With \texttt{TEST\_MODE=all}, Catch2 continues to later cases and Make continues to later groups. This does not mean every assertion after a failed \texttt{REQUIRE} will execute.
+
+The supplied test runner provides the test program's \texttt{main}. The Makefile compiles it with your implementation and runs it. For the unfinished \texttt{search}, output will include a failure resembling:
+\begin{terminal}
+search counts one occurrence within the specified size
+REQUIRE( count == 1 )
+with expansion:
+  0 == 1
+\end{terminal}
+The case name identifies the behaviour, and \texttt{0 == 1} shows the actual and expected values. Run/read the relevant tests, implement a small change, rerun, and preserve earlier successes. Writing extra tests remains optional.
 
 \subsection{Task 1: Searching in an array}
 
@@ -336,7 +377,7 @@ int search(char* array,
            char key);
 \end{cppcode}
 
-This function should count how many times \texttt{key} appears in the first \texttt{size} elements of \texttt{array}.
+This function returns a \textbf{count}, not an index or a Boolean. It counts how many times \texttt{key} appears in the first \texttt{size} elements of \texttt{array}.
 
 Before writing code, run the tests:
 
@@ -399,6 +440,16 @@ Most dynamic array operations in this practical follow the same pattern:
 allocate new memory, copy required values, release old memory, redirect the pointer, and update the size.
 \end{importantnote}
 
+\begin{infobox}
+\textbf{Why do these parameters contain \texttt{\&}?}
+
+A C++ reference is an alias for an existing variable. An \texttt{int\& size} parameter lets a function update the caller's size variable. An \texttt{int*\& array} parameter is a reference to the caller's pointer: assigning to \texttt{array} replaces that pointer. The \texttt{char*\&} form does the same for a character-array pointer.
+
+This differs from assigning to \texttt{array[i]}, which changes an element. After allocating a replacement array, the function must redirect the caller's pointer to it and update the caller's size. Pass the pointer and size variables directly, for example \texttt{resizeArray(values, size, 5)}; do not add an extra \texttt{\&} at the call.
+\end{infobox}
+
+The current array passed to \texttt{resizeArray} or \texttt{insert} must be a valid \texttt{new[]} allocation with its recorded size, or \texttt{nullptr} with size zero. The function takes responsibility for releasing the old allocation when it replaces it; the caller eventually deletes the final array.
+
 \subsection{Task 2: Resizing Arrays}
 
 The next function is:
@@ -459,14 +510,14 @@ Start by running the tests:
 make test-add
 \end{bashcode}
 
-Again, failing tests are expected at the beginning. Use the test names and failures to guide your implementation.
+The two input ranges must be separate: do not pass the same array, or a pointer into the first array, as \texttt{other}. A nonempty first array must have been allocated with \texttt{new[]}. The function owns neither the second array nor its storage; it copies its values and must not delete it.
 
 Your implementation should:
 \begin{itemize}
   \item append the contents of \texttt{other} to the end of \texttt{array};
   \item update \texttt{size} to the combined size;
   \item leave \texttt{other} unchanged;
-  \item treat \texttt{otherSize == 0} as a valid no-op;
+  \item after validating the inputs, treat \texttt{otherSize == 0} as a valid no-op which keeps the first pointer unchanged;
   \item handle an empty first array;
   \item return \texttt{false} if either size is negative, or if a pointer is \texttt{nullptr} while its corresponding size is greater than zero. A \texttt{nullptr} with size zero is treated as a valid empty array;
   \item leave the original array and size unchanged if the operation fails.
@@ -544,6 +595,7 @@ bool remove(int*& array,
 The function should remove the value at the specified position, shrink the array by one, and preserve the remaining values.
 \end{challengebox}
 
+\Needspace{90mm}
 \section{Part C - Reflections}
 
 \exercise{Understanding the Utility Library}{}
@@ -613,19 +665,23 @@ If you complete the core practical early, you can try one or more of the followi
 Before finishing the practical, make sure that:
 
 \begin{itemize}
-  \item all four demonstration programs run successfully;
+  \item all four demonstrations run with Demo 04's unsafe lines restored to comments;
   \item \texttt{make test-search} passes;
   \item \texttt{make test-resize} passes;
   \item \texttt{make test-add} passes;
   \item \texttt{make test-insert} passes;
-  \item your code compiles without avoidable warnings;
+  \item \texttt{make test TEST\_MODE=all} confirms that all four core groups pass;
+  \item your implementations compile without avoidable warnings (Demo 04 has an intentional warning);
   \item dynamically allocated memory is released appropriately;
   \item your changes have been committed and pushed.
 \end{itemize}
 
+Save your files and inspect the changed filenames. The supplied \texttt{.gitignore} excludes \texttt{bin/}; stage only intended source changes and inspect the staged diff. Check your latest commit and author on GitHub after pushing, as in Practical 2.
+
 \begin{bashcode}
 git status
 git add .
+git diff --staged
 git commit -m "Complete Practical 3 dynamic array functions"
 git push
 \end{bashcode}
